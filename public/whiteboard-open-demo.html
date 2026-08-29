@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Whiteboard Open Demo</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #9ca3af;
+      --zoom-x: 0px;
+      --zoom-y: 0px;
+      --zoom-scale: 1;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      background: #eef3f7;
+      cursor: none;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .frame {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #ffffff;
+      isolation: isolate;
+    }
+
+    .shot,
+    .board-stage {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .shot {
+      z-index: 1;
+      transform-origin: 0 0;
+      transform: translate3d(var(--zoom-x), var(--zoom-y), 0) scale(var(--zoom-scale));
+      opacity: 1;
+      transition:
+        transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 320ms ease;
+      will-change: transform, opacity;
+    }
+
+    .shot.is-hidden {
+      opacity: 0;
+    }
+
+    .workspace-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .whiteboard-target {
+      position: absolute;
+      left: 86.9%;
+      top: 52.7%;
+      width: 11.1%;
+      height: 9%;
+      border: 2px solid rgba(225, 29, 72, 0.5);
+      border-radius: 13px;
+      background: rgba(255, 240, 242, 0.14);
+      box-shadow: 0 0 0 0 rgba(225, 29, 72, 0);
+      opacity: 0;
+      transform: scale(0.98);
+      transform-origin: center;
+      transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 180ms ease,
+        background-color 180ms ease;
+    }
+
+    .whiteboard-target.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .whiteboard-target.is-pressed {
+      background: rgba(255, 240, 242, 0.32);
+      box-shadow: 0 14px 30px rgba(225, 29, 72, 0.22);
+      transform: scale(0.94);
+    }
+
+    .board-stage {
+      z-index: 2;
+      color: #1b1b1f;
+      background: #ffffff;
+      opacity: 0;
+      transform: translateY(18px) scale(1.012);
+      transition:
+        opacity 420ms ease,
+        transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+
+    .board-stage.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .board-stage svg {
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    .board-button,
+    .tool-button,
+    .side-button,
+    .swatch {
+      border: 0;
+      color: inherit;
+      background: transparent;
+      font: inherit;
+    }
+
+    .menu-button,
+    .back-button,
+    .library-button,
+    .help-button,
+    .bottom-control,
+    .toolbar,
+    .style-panel,
+    .library-panel {
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08), 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .menu-button,
+    .help-button {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      color: #4b5563;
+      background: #f0f0f8;
+    }
+
+    .menu-button {
+      top: 16px;
+      left: 16px;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 24px;
+      left: 96px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: #4b5563;
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .library-button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 13px;
+      border-radius: 9px;
+      color: #4b5563;
+      background: #f0f0f8;
+      font-size: 12px;
+      font-weight: 650;
+      transition:
+        opacity 240ms ease,
+        transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      min-height: 46px;
+      padding: 4px 9px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 10px;
+      transform: translateX(-50%);
+    }
+
+    .tool-button {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      color: #35383f;
+    }
+
+    .tool-button.is-active {
+      color: #2f2a9d;
+      background: #dedbff;
+    }
+
+    .board-stage.is-drawing .pointer-tool {
+      color: #35383f;
+      background: transparent;
+    }
+
+    .board-stage.is-drawing .pencil-tool {
+      color: #2f2a9d;
+      background: #dedbff;
+    }
+
+    .tool-button span {
+      position: absolute;
+      right: 4px;
+      bottom: 2px;
+      color: #7c7f87;
+      font-size: 8px;
+      font-weight: 700;
+    }
+
+    .divider {
+      width: 1px;
+      height: 24px;
+      margin: 0 5px;
+      background: #e5e7eb;
+    }
+
+    .hint,
+    .draw-hint {
+      position: absolute;
+      top: 76px;
+      left: 50%;
+      color: #b0b0b0;
+      font-size: 12px;
+      transform: translateX(-50%);
+      transition: opacity 220ms ease;
+      white-space: nowrap;
+    }
+
+    .draw-hint {
+      opacity: 0;
+    }
+
+    .board-stage.is-drawing .hint {
+      opacity: 0;
+    }
+
+    .board-stage.is-drawing .draw-hint {
+      opacity: 1;
+    }
+
+    .library-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(282px, 30%);
+      border-left: 1px solid #edf0f6;
+      opacity: 0;
+      transform: translateX(24px);
+      transition:
+        opacity 340ms ease,
+        transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .board-stage.is-library .library-panel {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .board-stage.is-library .library-button {
+      opacity: 0;
+      transform: translateX(16px);
+    }
+
+    .library-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 68px;
+      padding: 0 14px;
+      border-bottom: 1px solid #edf0f6;
+    }
+
+    .library-search,
+    .library-tab {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 9px;
+      color: #1f2937;
+    }
+
+    .library-tab {
+      color: #ffffff;
+      background: #2563eb;
+    }
+
+    .library-spacer {
+      flex: 1;
+    }
+
+    .library-empty {
+      position: absolute;
+      top: 50%;
+      right: 28px;
+      left: 28px;
+      text-align: center;
+      transform: translateY(-50%);
+    }
+
+    .library-empty strong {
+      display: block;
+      margin-bottom: 16px;
+      color: #2563eb;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .library-empty span {
+      color: #666;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .library-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .browse {
+      flex: 1;
+      height: 36px;
+      border-radius: 7px;
+      color: #ffffff;
+      background: #2563eb;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .more {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .style-panel {
+      position: absolute;
+      top: 76px;
+      left: 16px;
+      width: 200px;
+      padding: 14px 12px;
+      border: 1px solid #edf0f6;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateX(-16px);
+      transition:
+        opacity 320ms ease,
+        transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .board-stage.is-drawing .style-panel {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .style-group {
+      margin-bottom: 16px;
+    }
+
+    .style-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #30343b;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .swatches,
+    .width-row,
+    .layer-row {
+      display: flex;
+      gap: 7px;
+    }
+
+    .swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: var(--swatch);
+    }
+
+    .swatch.is-active {
+      outline: 2px solid #5f5bf1;
+      outline-offset: 2px;
+    }
+
+    .swatch.transparent {
+      background:
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+      background-size: 14px 14px;
+    }
+
+    .side-button {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: #f0f0f8;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .side-button.is-active {
+      background: #dedbff;
+    }
+
+    .opacity-track {
+      position: relative;
+      height: 4px;
+      margin: 12px 7px 0;
+      border-radius: 999px;
+      background: #dcd7ff;
+    }
+
+    .opacity-track::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #4a4a4a;
+      transform: translateY(-50%);
+    }
+
+    .opacity-scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      color: #5f6368;
+      font-size: 11px;
+    }
+
+    .drawing-layer {
+      position: absolute;
+      inset: 13% 10% 12% 26%;
+      opacity: 0;
+      transition: opacity 220ms ease;
+    }
+
+    .board-stage.is-drawing .drawing-layer {
+      opacity: 1;
+    }
+
+    .draw-path {
+      fill: none;
+      stroke: #202124;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+
+    .board-stage.is-drawing .draw-path {
+      animation: drawPath 2200ms cubic-bezier(0.45, 0, 0.2, 1) forwards;
+    }
+
+    .bottom-left,
+    .help-button {
+      position: absolute;
+      bottom: 16px;
+    }
+
+    .bottom-left {
+      left: 16px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .bottom-control {
+      display: inline-flex;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #f0f0f8;
+    }
+
+    .bottom-control span {
+      display: grid;
+      place-items: center;
+      min-width: 36px;
+      height: 36px;
+      color: #1f2937;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bottom-control .zoom-value {
+      min-width: 66px;
+      background: #ffffff;
+    }
+
+    .help-button {
+      right: 16px;
+    }
+
+    @keyframes drawPath {
+      from {
+        stroke-dashoffset: 1;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .toolbar {
+        gap: 1px;
+        padding: 3px;
+      }
+
+      .tool-button {
+        width: 27px;
+        height: 32px;
+      }
+
+      .style-panel {
+        width: 150px;
+      }
+
+      .library-panel {
+        width: 38%;
+      }
+
+      .drawing-layer {
+        inset: 18% 4% 14% 42%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .drawing-layer {
+        inset: 18% 4% 14% 46%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="frame" id="frame" aria-label="Whiteboard feature demo animation">
+    <section class="shot" id="shot" aria-label="Workspace screenshot">
+      <img class="workspace-image" src="/images/workspace-how-to-start.png" alt="" draggable="false" />
+      <span class="whiteboard-target" id="whiteboardTarget" aria-hidden="true"></span>
+    </section>
+
+    <section class="board-stage" id="boardStage" aria-label="Whiteboard canvas preview">
+      <button class="board-button menu-button" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+      </button>
+
+      <button class="board-button back-button" aria-label="Back">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5m7-7-7 7 7 7" /></svg>
+        <span>Back</span>
+      </button>
+
+      <div class="toolbar" aria-label="Whiteboard tools">
+        <button class="tool-button" aria-label="Lock"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></button>
+        <div class="divider"></div>
+        <button class="tool-button" aria-label="Hand"><svg viewBox="0 0 24 24"><path d="M8 12V6a2 2 0 1 1 4 0v5-3a2 2 0 1 1 4 0v4-2a2 2 0 1 1 4 0v4c0 4-3 7-7 7h-1c-3 0-5-2-6-5l-2-4a2 2 0 1 1 4-2z" /></svg></button>
+        <button class="tool-button pointer-tool is-active" aria-label="Pointer"><svg viewBox="0 0 24 24"><path d="m5 3 6 16 2-7 7-2z" /></svg><span>1</span></button>
+        <button class="tool-button" aria-label="Rectangle"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1" /></svg><span>2</span></button>
+        <button class="tool-button" aria-label="Diamond"><svg viewBox="0 0 24 24"><path d="m12 3 9 9-9 9-9-9z" /></svg><span>3</span></button>
+        <button class="tool-button" aria-label="Circle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /></svg><span>4</span></button>
+        <button class="tool-button" aria-label="Arrow"><svg viewBox="0 0 24 24"><path d="M5 19 19 5m0 0h-8m8 0v8" /></svg><span>5</span></button>
+        <button class="tool-button" aria-label="Line"><svg viewBox="0 0 24 24"><path d="M5 19 19 5" /></svg><span>6</span></button>
+        <button class="tool-button pencil-tool" aria-label="Pencil"><svg viewBox="0 0 24 24"><path d="M4 20c5-1 12-8 14-14l-2-2C10 6 5 13 4 20z" /></svg><span>7</span></button>
+        <button class="tool-button" aria-label="Text"><svg viewBox="0 0 24 24"><path d="M4 6V4h16v2M12 4v16m-4 0h8" /></svg><span>8</span></button>
+        <button class="tool-button" aria-label="Image"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="m7 16 4-4 3 3 2-2 3 3M8 9h.01" /></svg><span>9</span></button>
+        <button class="tool-button" aria-label="Eraser"><svg viewBox="0 0 24 24"><path d="m4 15 9-9a3 3 0 0 1 4 0l3 3a3 3 0 0 1 0 4l-7 7H8zM9 10l6 6" /></svg><span>0</span></button>
+        <div class="divider"></div>
+        <button class="tool-button" aria-label="Frame"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1" stroke-dasharray="3 2" /></svg></button>
+      </div>
+
+      <span class="hint">To move canvas, hold mouse wheel or spacebar while dragging, or use the hand tool</span>
+      <span class="draw-hint">Click and drag, release when you're finished</span>
+
+      <button class="board-button library-button" aria-label="Library">
+        <svg viewBox="0 0 24 24"><path d="M5 19V5h4v14M10 19V5h4v14M15 19l2-14 3 1-2 14z" /></svg>
+        <span>Library</span>
+      </button>
+
+      <aside class="library-panel" aria-label="Library panel">
+        <header class="library-header">
+          <span class="library-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6" /><path d="m16 16 4 4" /></svg></span>
+          <span class="library-tab"><svg viewBox="0 0 24 24"><path d="M5 19V5h4v14M10 19V5h4v14M15 19l2-14 3 1-2 14z" /></svg></span>
+          <span class="library-spacer"></span>
+          <span><svg viewBox="0 0 24 24"><path d="m14 4 6 6-4 1-5 5v4l-3-3-3-3h4l5-5z" /></svg></span>
+          <span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg></span>
+        </header>
+        <div class="library-empty">
+          <strong>No items added yet...</strong>
+          <span>Select an item on canvas to add it here, or install a library from the public repository, below.</span>
+          <div class="library-actions">
+            <button class="board-button browse">Browse libraries</button>
+            <button class="board-button more">⋮</button>
+          </div>
+        </div>
+      </aside>
+
+      <aside class="style-panel" aria-label="Pen style panel">
+        <div class="style-group">
+          <span class="style-label">Stroke</span>
+          <div class="swatches">
+            <span class="swatch is-active" style="--swatch:#1f2937"></span>
+            <span class="swatch" style="--swatch:#dc3545"></span>
+            <span class="swatch" style="--swatch:#2ca24d"></span>
+            <span class="swatch" style="--swatch:#1f77b4"></span>
+            <span class="swatch" style="--swatch:#f59e0b"></span>
+            <span class="swatch" style="--swatch:#1f1f1f"></span>
+          </div>
+        </div>
+        <div class="style-group">
+          <span class="style-label">Background</span>
+          <div class="swatches">
+            <span class="swatch transparent is-active"></span>
+            <span class="swatch" style="--swatch:#f6b8bc"></span>
+            <span class="swatch" style="--swatch:#b8efc6"></span>
+            <span class="swatch" style="--swatch:#a8d4f2"></span>
+            <span class="swatch" style="--swatch:#ffe28a"></span>
+          </div>
+        </div>
+        <div class="style-group">
+          <span class="style-label">Stroke width</span>
+          <div class="width-row">
+            <span class="side-button">−</span>
+            <span class="side-button is-active">−</span>
+            <span class="side-button">−</span>
+          </div>
+        </div>
+        <div class="style-group">
+          <span class="style-label">Opacity</span>
+          <div class="opacity-track"></div>
+          <div class="opacity-scale"><span>0</span><span>100</span></div>
+        </div>
+        <div class="style-group">
+          <span class="style-label">Layers</span>
+          <div class="layer-row">
+            <span class="side-button">↓</span>
+            <span class="side-button">↓</span>
+            <span class="side-button">↑</span>
+            <span class="side-button">↟</span>
+          </div>
+        </div>
+      </aside>
+
+      <svg class="drawing-layer" viewBox="0 0 1120 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path
+          class="draw-path"
+          pathLength="1"
+          d="M88 205 C100 145 188 78 300 74 C382 72 395 195 390 290 C389 314 400 323 421 306 C506 238 543 104 596 116 C682 130 719 198 716 289 C715 316 725 325 746 302 C815 225 860 112 925 126 C1002 143 1040 200 1050 264"
+        />
+      </svg>
+
+      <div class="bottom-left">
+        <div class="bottom-control"><span>−</span><span class="zoom-value">100%</span><span>＋</span></div>
+        <div class="bottom-control"><span>↶</span><span>↷</span></div>
+      </div>
+      <button class="board-button help-button" aria-label="Help">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.5 2.5 0 1 1 4.2 1.8c-1 .8-1.7 1.3-1.7 2.7M12 17h.01" /></svg>
+      </button>
+    </section>
+  </main>
+
+  <script>
+    const frame = document.getElementById("frame");
+    const shot = document.getElementById("shot");
+    const whiteboardTarget = document.getElementById("whiteboardTarget");
+    const boardStage = document.getElementById("boardStage");
+
+    const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+    function resizeDemo() {
+      if (Number.parseFloat(getComputedStyle(shot).getPropertyValue("--zoom-scale")) > 1) {
+        focusImagePoint({ x: 0.925, y: 0.572 }, 2.15, false);
+      }
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function focusImagePoint(target, scale, animate = true) {
+      const frameRect = frame.getBoundingClientRect();
+      const targetX = frameRect.width * target.x;
+      const targetY = frameRect.height * target.y;
+      const minX = frameRect.width - frameRect.width * scale;
+      const minY = frameRect.height - frameRect.height * scale;
+      const translateX = clamp(frameRect.width / 2 - targetX * scale, minX, 0);
+      const translateY = clamp(frameRect.height / 2 - targetY * scale, minY, 0);
+
+      if (!animate) {
+        shot.style.transitionDuration = "0ms";
+      }
+
+      shot.style.setProperty("--zoom-x", `${translateX}px`);
+      shot.style.setProperty("--zoom-y", `${translateY}px`);
+      shot.style.setProperty("--zoom-scale", scale);
+
+      if (!animate) {
+        void shot.offsetWidth;
+        shot.style.transitionDuration = "480ms";
+      }
+    }
+
+    function resetDemo() {
+      shot.style.transitionDuration = "0ms";
+      shot.style.setProperty("--zoom-x", "0px");
+      shot.style.setProperty("--zoom-y", "0px");
+      shot.style.setProperty("--zoom-scale", "1");
+      shot.classList.remove("is-hidden");
+      whiteboardTarget.classList.remove("is-visible", "is-pressed");
+      boardStage.classList.remove("is-visible", "is-library", "is-drawing");
+      void shot.offsetWidth;
+      shot.style.transitionDuration = "480ms";
+    }
+
+    async function play() {
+      resetDemo();
+      await wait(100);
+
+      focusImagePoint({ x: 0.925, y: 0.572 }, 2.15);
+      await wait(1480);
+
+      whiteboardTarget.classList.add("is-visible");
+      await wait(120);
+      whiteboardTarget.classList.add("is-pressed");
+      await wait(180);
+      whiteboardTarget.classList.remove("is-pressed");
+      await wait(900);
+
+      shot.classList.add("is-hidden");
+      boardStage.classList.add("is-visible");
+      await wait(620);
+
+      boardStage.classList.add("is-library");
+      await wait(700);
+
+      boardStage.classList.remove("is-library");
+      boardStage.classList.add("is-drawing");
+      await wait(3600);
+    }
+
+    window.addEventListener("resize", resizeDemo);
+    window.addEventListener("load", () => {
+      resizeDemo();
+      play();
+    }, { once: true });
+  </script>
+</body>
+</html>

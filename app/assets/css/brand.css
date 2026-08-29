@@ -1,0 +1,14 @@
+:root {
+  --brand-scholars-sky: #1BA6D1;
+  --brand-vital-green: #1BD183;
+  --brand-tech-charcoal: #333A3F;
+  --brand-cloud-grey: #F5F7FA;
+  --brand-primary-gradient: linear-gradient(90deg, var(--brand-scholars-sky), var(--brand-vital-green));
+  --brand-heading-font: "Futura Now Headline", "Avenir Next", Avenir, "Century Gothic", Futura, "Trebuchet MS", sans-serif;
+  --brand-body-font: "TT Commons Pro", Arial, sans-serif;
+
+  --scholars-sky: var(--brand-scholars-sky);
+  --vital-green: var(--brand-vital-green);
+  --tech-charcoal: var(--brand-tech-charcoal);
+  --cloud-grey: var(--brand-cloud-grey);
+}

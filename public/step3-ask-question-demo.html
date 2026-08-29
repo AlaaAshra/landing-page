@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Step 3 Ask Question Demo</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --type-ink: #51627d;
+      --cursor: #111827;
+      --image-width: 1280px;
+      --image-height: 720px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      color: var(--ink);
+      background: #eef3f7;
+      cursor: none;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .frame {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1280px;
+      height: 800px;
+      overflow: hidden;
+      margin: -400px 0 0 -640px;
+      background:
+        radial-gradient(circle at 12% 3%, rgba(25, 213, 133, 0.18), transparent 30%),
+        linear-gradient(90deg, #f5f8fb, #ffffff 42%, #f5f8fb);
+      isolation: isolate;
+      transform: scale(var(--demo-scale, 1));
+      transform-origin: center center;
+    }
+
+    .shot {
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: var(--image-width);
+      height: var(--image-height);
+      transform-origin: 0 0;
+      transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
+    .workspace-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .typed-prompt {
+      position: absolute;
+      left: 30.55%;
+      top: 73.05%;
+      display: inline-flex;
+      align-items: center;
+      max-width: 38%;
+      min-height: 30px;
+      padding: 1px 7px 2px 6px;
+      overflow: hidden;
+      color: var(--type-ink);
+      background: rgba(248, 250, 252, 0.92);
+      border-radius: 7px;
+      font-size: 15px;
+      font-weight: 650;
+      line-height: 1.25;
+      opacity: 0;
+      white-space: nowrap;
+      transition: opacity 160ms ease;
+    }
+
+    .typed-prompt.is-visible {
+      opacity: 1;
+    }
+
+    .typing-caret {
+      display: inline-block;
+      width: 1px;
+      height: 19px;
+      margin-left: 3px;
+      background: var(--cursor);
+      animation: blink 750ms steps(1) infinite;
+    }
+
+    .focus-ring {
+      position: absolute;
+      z-index: 2;
+      left: 30.1%;
+      top: 72.3%;
+      width: 39.6%;
+      height: 11.7%;
+      border: 2px solid rgba(37, 199, 165, 0.7);
+      border-radius: 25px;
+      opacity: 0;
+      transform: scale(0.985);
+      transition:
+        opacity 180ms ease,
+        transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .focus-ring.is-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .empty-state-cover {
+      position: absolute;
+      z-index: 3;
+      left: 30.4%;
+      top: 37.4%;
+      width: 45.4%;
+      height: 24.8%;
+      border-radius: 18px;
+      background: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .empty-state-cover.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sent-bubble {
+      position: absolute;
+      z-index: 4;
+      top: 27.6%;
+      right: 27.2%;
+      max-width: 13.5%;
+      padding: 14px 19px;
+      border-radius: 24px 24px 8px 24px;
+      color: #172033;
+      background: #f1f3f6;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.28;
+      opacity: 0;
+      white-space: nowrap;
+      transform: translateY(12px) scale(0.98);
+      transition:
+        opacity 260ms ease,
+        transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sent-bubble.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .sina-response {
+      position: absolute;
+      z-index: 4;
+      top: 38.5%;
+      left: 30.8%;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 14px;
+      width: 40.4%;
+      color: #182235;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(14px);
+      transition:
+        opacity 260ms ease,
+        transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .sina-response.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .sina-orb {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 36% 34%, #7df2d0 0 16%, #3a88f5 48%, #1b2a69 100%);
+      box-shadow: 0 8px 22px rgba(59, 130, 246, 0.24);
+    }
+
+    .sina-orb::before {
+      content: "";
+      width: 13px;
+      height: 13px;
+      background: #c8fff2;
+      clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+    }
+
+    .response-copy {
+      min-width: 0;
+      padding-top: 2px;
+    }
+
+    .response-line {
+      margin: 0 0 12px;
+      color: #182235;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.52;
+      overflow-wrap: anywhere;
+      opacity: 0;
+      transform: translateY(8px);
+      transition:
+        opacity 300ms ease,
+        transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .response-line.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .source-ref {
+      display: inline-grid;
+      place-items: center;
+      min-width: 21px;
+      height: 21px;
+      margin-left: 4px;
+      border-radius: 7px;
+      color: #2563eb;
+      background: #dbeafe;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .source-badge {
+      display: block;
+      margin-top: 22px;
+      color: #97a1af;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-align: right;
+      opacity: 0;
+      transition: opacity 260ms ease;
+    }
+
+    .source-badge.is-visible {
+      opacity: 1;
+    }
+
+    @keyframes blink {
+      0%,
+      49% {
+        opacity: 1;
+      }
+
+      50%,
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="frame" id="frame" aria-label="Step 3 ask question demo">
+    <section class="shot" id="shot" aria-label="Workspace screenshot">
+      <img class="workspace-image" src="/images/workspace-how-to-start.png" alt="" draggable="false" />
+      <span class="empty-state-cover" id="emptyStateCover" aria-hidden="true"></span>
+      <span class="focus-ring" id="focusRing" aria-hidden="true"></span>
+      <span class="typed-prompt" id="typedPrompt" aria-hidden="true"><span id="typedText"></span><span class="typing-caret"></span></span>
+      <span class="sent-bubble" id="sentBubble" aria-hidden="true">skin cancer</span>
+      <div class="sina-response" id="sinaResponse" aria-hidden="true">
+        <span class="sina-orb"></span>
+        <div class="response-copy">
+          <p class="response-line">The selected anatomy notes do not contain a full skin cancer section; they identify the integumentary system as skin, hair, nails, and glands.<span class="source-ref">1</span></p>
+          <p class="response-line">Add a dermatology source, then ask Sina to compare basal cell carcinoma, squamous cell carcinoma, and melanoma.</p>
+          <span class="source-badge" id="sourceBadge">1 SOURCE</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const frame = document.getElementById("frame");
+    const shot = document.getElementById("shot");
+    const typedPrompt = document.getElementById("typedPrompt");
+    const typedText = document.getElementById("typedText");
+    const focusRing = document.getElementById("focusRing");
+    const emptyStateCover = document.getElementById("emptyStateCover");
+    const sentBubble = document.getElementById("sentBubble");
+    const sinaResponse = document.getElementById("sinaResponse");
+    const responseLines = Array.from(document.querySelectorAll(".response-line"));
+    const sourceBadge = document.getElementById("sourceBadge");
+    const imageSize = { width: 1280, height: 720 };
+    let demoScale = 1;
+
+    const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+    function notifyDemoComplete() {
+      window.parent.postMessage({ type: "plan-demo-complete", step: 2 }, window.location.origin);
+    }
+
+    function resizeDemo() {
+      demoScale = Math.min(window.innerWidth / 1280, window.innerHeight / 800);
+      document.documentElement.style.setProperty("--demo-scale", demoScale);
+    }
+
+    function focusImagePoint(target, scale) {
+      const x = imageSize.width * target.x;
+      const y = imageSize.height * target.y;
+      const translateX = 640 - x * scale;
+      const translateY = 400 - 40 - y * scale;
+      shot.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+    }
+
+    function typePrompt(value, speed = 46) {
+      typedPrompt.classList.add("is-visible");
+      typedText.textContent = "";
+
+      return new Promise((resolve) => {
+        let index = 0;
+
+        const tick = () => {
+          typedText.textContent = value.slice(0, index);
+          index += 1;
+
+          if (index <= value.length) {
+            window.setTimeout(tick, speed);
+            return;
+          }
+
+          resolve();
+        };
+
+        tick();
+      });
+    }
+
+    function resetDemo() {
+      shot.style.transitionDuration = "0ms";
+      shot.style.transform = "translate3d(0, 0, 0) scale(1)";
+      typedPrompt.classList.remove("is-visible");
+      focusRing.classList.remove("is-visible");
+      emptyStateCover.classList.remove("is-visible");
+      sentBubble.classList.remove("is-visible");
+      sinaResponse.classList.remove("is-visible");
+      responseLines.forEach((line) => line.classList.remove("is-visible"));
+      sourceBadge.classList.remove("is-visible");
+      typedText.textContent = "";
+      void shot.offsetWidth;
+      shot.style.transitionDuration = "480ms";
+    }
+
+    async function play() {
+      resetDemo();
+      await wait(100);
+
+      focusImagePoint({ x: 0.865, y: 0.4 }, 1.9);
+      await wait(1480);
+
+      focusImagePoint({ x: 0.5, y: 0.79 }, 1.72);
+      await wait(520);
+
+      focusRing.classList.add("is-visible");
+      await wait(80);
+      await typePrompt("skin cancer", 58);
+      await wait(260);
+
+      focusImagePoint({ x: 0.55, y: 0.5 }, 1.55);
+      await wait(540);
+
+      typedPrompt.classList.remove("is-visible");
+      focusRing.classList.remove("is-visible");
+      emptyStateCover.classList.add("is-visible");
+      await wait(80);
+
+      sentBubble.classList.add("is-visible");
+      await wait(520);
+
+      sinaResponse.classList.add("is-visible");
+      await wait(360);
+
+      for (const line of responseLines) {
+        line.classList.add("is-visible");
+        await wait(680);
+      }
+
+      sourceBadge.classList.add("is-visible");
+      await wait(2300);
+      notifyDemoComplete();
+    }
+
+    window.addEventListener("resize", resizeDemo);
+    window.addEventListener("load", () => {
+      resizeDemo();
+      play();
+    }, { once: true });
+  </script>
+</body>
+</html>
