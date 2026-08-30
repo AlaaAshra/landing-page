@@ -204,12 +204,17 @@
       </div>
     </section>
 
-    <section class="hero-video-section" aria-label="MedicalStudent AI product preview">
+    <section
+      ref="heroVideoSectionRef"
+      class="hero-video-section"
+      :class="{ 'is-in-view': isHeroVideoSectionInView }"
+      aria-label="MedicalStudent AI product preview"
+    >
       <div class="hero-video-shell">
         <video
+          ref="heroVideoRef"
           class="hero-video"
           src="/videos/MedicalStudentAi_comp.mp4"
-          autoplay
           muted
           loop
           playsinline
@@ -256,7 +261,7 @@
               :class="{ 'is-active': currentPlanStep === index, 'has-demo': index <= 2 }"
               aria-hidden="true"
             >
-              <div v-if="index === 0" class="getting-started-demo-embed">
+              <div v-if="arePlanStepsActive && index === 0" class="getting-started-demo-embed">
                 <iframe
                   :key="`getting-started-demo-${planDemoReplayKey}`"
                   :src="`/how-to-get-started-demo.html?play=${planDemoReplayKey}`"
@@ -265,7 +270,7 @@
                   tabindex="-1"
                 ></iframe>
               </div>
-              <div v-else-if="index === 1" class="getting-started-demo-embed">
+              <div v-else-if="arePlanStepsActive && index === 1" class="getting-started-demo-embed">
                 <iframe
                   :key="`step2-add-source-demo-${planSourceDemoReplayKey}`"
                   :src="`/step2-add-source-demo.html?play=${planSourceDemoReplayKey}`"
@@ -274,7 +279,7 @@
                   tabindex="-1"
                 ></iframe>
               </div>
-              <div v-else-if="index === 2" class="getting-started-demo-embed">
+              <div v-else-if="arePlanStepsActive && index === 2" class="getting-started-demo-embed">
                 <iframe
                   :key="`step3-ask-question-demo-${planQuestionDemoReplayKey}`"
                   :src="`/step3-ask-question-demo.html?play=${planQuestionDemoReplayKey}`"
@@ -304,7 +309,13 @@
       </div>
     </section>
 
-    <section id="features" ref="featuresSectionRef" class="features-section" aria-labelledby="features-title">
+    <section
+      id="features"
+      ref="featuresSectionRef"
+      class="features-section"
+      :class="{ 'is-in-view': isSummarySectionInView }"
+      aria-labelledby="features-title"
+    >
       <div class="section-shell features-shell">
         <div class="features-copy">
           <p class="features-kicker">Summarize</p>
@@ -414,7 +425,13 @@
       </div>
     </section>
 
-    <section id="mind-map-feature" class="features-section" aria-labelledby="features-mindmap-title">
+    <section
+      id="mind-map-feature"
+      ref="mindMapSectionRef"
+      class="features-section"
+      :class="{ 'is-in-view': isMindMapSectionInView }"
+      aria-labelledby="features-mindmap-title"
+    >
       <div class="section-shell features-shell features-anatomy-shell features-mindmap-shell">
         <div class="features-copy">
           <p class="features-kicker">MIND MAP</p>
@@ -514,9 +531,49 @@
       </div>
     </section>
 
-    <WhiteboardFeature />
+    <section
+      id="whiteboard-feature"
+      ref="whiteboardSectionRef"
+      class="features-section"
+      :class="{ 'is-in-view': isWhiteboardSectionInView }"
+      aria-labelledby="features-whiteboard-title"
+    >
+      <div class="section-shell features-shell features-anatomy-shell features-mindmap-shell">
+        <div class="features-copy">
+          <p class="features-kicker">WHITEBOARD</p>
+          <h2 id="features-whiteboard-title">
+            <span>Make study</span>
+            <span>interactive</span>
+          </h2>
+          <p class="features-description">
+            Use the whiteboard to make learning interactive &mdash; add images and take notes as you study.
+          </p>
+          <a class="features-cta" href="/onboarding">
+            <span aria-hidden="true"></span>
+            DISCOVER
+          </a>
+        </div>
 
-    <section class="features-section" aria-labelledby="features-anatomy-title">
+        <article class="features-summary-card features-anatomy-card features-whiteboard-card" aria-label="MedicalStudent.ai whiteboard feature preview">
+          <video
+            ref="whiteboardVideoRef"
+            class="features-whiteboard-video"
+            src="/videos/whiteboard-feature.mp4"
+            muted
+            loop
+            playsinline
+            preload="auto"
+          ></video>
+        </article>
+      </div>
+    </section>
+
+    <section
+      ref="anatomySectionRef"
+      class="features-section"
+      :class="{ 'is-in-view': isAnatomySectionInView }"
+      aria-labelledby="features-anatomy-title"
+    >
       <div class="section-shell features-shell features-anatomy-shell">
         <div class="features-copy">
           <p class="features-kicker">3D ANATOMY</p>
@@ -538,7 +595,6 @@
             ref="anatomyVideoRef"
             class="features-anatomy-video"
             src="/videos/anatomy-atlas-feature.mp4"
-            autoplay
             muted
             loop
             playsinline
@@ -550,7 +606,13 @@
       </div>
     </section>
 
-    <section id="social-proof" class="social-proof-section" aria-labelledby="social-proof-title">
+    <section
+      id="social-proof"
+      ref="socialProofSectionRef"
+      class="social-proof-section"
+      :class="{ 'is-in-view': isSocialProofSectionInView }"
+      aria-labelledby="social-proof-title"
+    >
       <div class="section-shell testimonials-shell">
         <div class="testimonials-heading">
           <h2 id="social-proof-title">What our users say</h2>
@@ -597,7 +659,13 @@
       </div>
     </section>
 
-    <section id="faq" class="faq-section" aria-labelledby="faq-title">
+    <section
+      id="faq"
+      ref="faqSectionRef"
+      class="faq-section"
+      :class="{ 'is-in-view': isFaqSectionInView }"
+      aria-labelledby="faq-title"
+    >
       <div class="section-shell faq-shell">
         <div class="faq-header">
           <h2 id="faq-title">Frequently Asked Questions</h2>
@@ -711,16 +779,32 @@ const planStepProgress = ref(0);
 const isHeaderScrolled = ref(false);
 const onboardingStep = ref(0);
 const isOnboardingSubmitting = ref(false);
+const heroVideoSectionRef = ref<HTMLElement | null>(null);
 const featuresSectionRef = ref<HTMLElement | null>(null);
 const planStepsSectionRef = ref<HTMLElement | null>(null);
+const mindMapSectionRef = ref<HTMLElement | null>(null);
+const whiteboardSectionRef = ref<HTMLElement | null>(null);
+const anatomySectionRef = ref<HTMLElement | null>(null);
+const socialProofSectionRef = ref<HTMLElement | null>(null);
+const faqSectionRef = ref<HTMLElement | null>(null);
 const summaryCardRef = ref<HTMLElement | null>(null);
 const summaryButtonRef = ref<HTMLButtonElement | null>(null);
+const heroVideoRef = ref<HTMLVideoElement | null>(null);
+const whiteboardVideoRef = ref<HTMLVideoElement | null>(null);
 const anatomyVideoRef = ref<HTMLVideoElement | null>(null);
 const summaryThumbnailSrc = ref(summaryThumbnailPrimary);
 const summaryCursorStyle = ref({ left: "calc(100% - 86px)", top: "calc(100% - 78px)" });
 const planDemoReplayKey = ref(0);
 const planSourceDemoReplayKey = ref(0);
 const planQuestionDemoReplayKey = ref(0);
+const arePlanStepsActive = ref(false);
+const isHeroVideoSectionInView = ref(false);
+const isSummarySectionInView = ref(false);
+const isMindMapSectionInView = ref(false);
+const isWhiteboardSectionInView = ref(false);
+const isAnatomySectionInView = ref(false);
+const isSocialProofSectionInView = ref(false);
+const isFaqSectionInView = ref(false);
 const isSummaryPreviewReady = ref(false);
 const isSummaryPreviewDemoActive = ref(false);
 const isSummaryPreviewPressing = ref(false);
@@ -768,12 +852,57 @@ let planProgressAnimationFrame: number | undefined;
 let planStepFallbackTimer: ReturnType<typeof window.setTimeout> | undefined;
 let planStepAdvanceTimer: ReturnType<typeof window.setTimeout> | undefined;
 let activePlanStepRun = 0;
-let arePlanStepsInView = false;
 let heroTypewriterTimer: ReturnType<typeof window.setTimeout> | undefined;
+let heroVideoObserver: IntersectionObserver | undefined;
 let summaryPreviewObserver: IntersectionObserver | undefined;
 let planStepsObserver: IntersectionObserver | undefined;
+let mindMapObserver: IntersectionObserver | undefined;
+let whiteboardObserver: IntersectionObserver | undefined;
+let anatomyObserver: IntersectionObserver | undefined;
+let socialProofObserver: IntersectionObserver | undefined;
+let faqObserver: IntersectionObserver | undefined;
 let summaryPreviewTimers: ReturnType<typeof window.setTimeout>[] = [];
 let mindMapTimers: ReturnType<typeof window.setTimeout>[] = [];
+
+type SectionVisibilityHandlers = {
+  onEnter: () => void;
+  onExit: () => void;
+  enterRatio?: number;
+  exitRatio?: number;
+};
+
+const observeSectionVisibility = (
+  element: HTMLElement | null,
+  { onEnter, onExit, enterRatio = 0.2, exitRatio = 0.05 }: SectionVisibilityHandlers,
+) => {
+  if (!element || !("IntersectionObserver" in window)) {
+    onEnter();
+    return undefined;
+  }
+
+  let isInView = false;
+  const thresholds = Array.from(new Set([0, exitRatio, enterRatio, 0.45, 0.6])).sort((a, b) => a - b);
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting && entry.intersectionRatio >= enterRatio) {
+        if (!isInView) {
+          isInView = true;
+          onEnter();
+        }
+        return;
+      }
+
+      if (isInView && (!entry.isIntersecting || entry.intersectionRatio <= exitRatio)) {
+        isInView = false;
+        onExit();
+      }
+    },
+    { threshold: thresholds },
+  );
+
+  observer.observe(element);
+  return observer;
+};
 
 const updateHeaderScroll = () => {
   isHeaderScrolled.value = window.scrollY > 10;
@@ -820,6 +949,57 @@ const setAnatomyVideoPlaybackRate = () => {
   }
 };
 
+const playVideoPreview = (video: HTMLVideoElement | null, playbackRate = 1) => {
+  if (!video) {
+    return;
+  }
+
+  video.muted = true;
+  video.playbackRate = playbackRate;
+
+  try {
+    video.currentTime = 0;
+  } catch {
+    // The video may not have metadata yet; it will still start at the first frame.
+  }
+
+  void video.play().catch(() => undefined);
+};
+
+const resetVideoPreview = (video: HTMLVideoElement | null) => {
+  if (!video) {
+    return;
+  }
+
+  video.pause();
+
+  try {
+    video.currentTime = 0;
+  } catch {
+    // Ignore seek errors while metadata is still loading.
+  }
+};
+
+const playHeroVideoPreview = () => {
+  isHeroVideoSectionInView.value = true;
+  playVideoPreview(heroVideoRef.value);
+};
+
+const resetHeroVideoPreview = () => {
+  isHeroVideoSectionInView.value = false;
+  resetVideoPreview(heroVideoRef.value);
+};
+
+const playAnatomyVideoPreview = () => {
+  isAnatomySectionInView.value = true;
+  playVideoPreview(anatomyVideoRef.value, 1.35);
+};
+
+const resetAnatomyVideoPreview = () => {
+  isAnatomySectionInView.value = false;
+  resetVideoPreview(anatomyVideoRef.value);
+};
+
 const startMindMapDemo = () => {
   clearMindMapTimers();
   mindMapPhase.value = "idle";
@@ -843,8 +1023,34 @@ const startMindMapDemo = () => {
   queueMindMapTimer(startMindMapDemo, 11000);
 };
 
+const playMindMapDemo = () => {
+  if (isMindMapSectionInView.value) {
+    return;
+  }
+
+  isMindMapSectionInView.value = true;
+  startMindMapDemo();
+};
+
+const resetMindMapDemo = () => {
+  isMindMapSectionInView.value = false;
+  clearMindMapTimers();
+  mindMapPhase.value = "idle";
+};
+
+const playWhiteboardVideoPreview = () => {
+  isWhiteboardSectionInView.value = true;
+  playVideoPreview(whiteboardVideoRef.value);
+};
+
+const resetWhiteboardVideoPreview = () => {
+  isWhiteboardSectionInView.value = false;
+  resetVideoPreview(whiteboardVideoRef.value);
+};
+
 const resetSummaryPreviewDemo = () => {
   clearSummaryPreviewTimers();
+  isSummarySectionInView.value = false;
   isSummaryPreviewReady.value = false;
   isSummaryPreviewDemoActive.value = false;
   isSummaryPreviewPressing.value = false;
@@ -1015,6 +1221,10 @@ const clearPlanStepTimers = () => {
 };
 
 const startPlanStepProgress = (index: number) => {
+  if (!arePlanStepsActive.value) {
+    return;
+  }
+
   clearPlanStepTimers();
   activePlanStepRun += 1;
   const runId = activePlanStepRun;
@@ -1038,12 +1248,20 @@ const startPlanStepProgress = (index: number) => {
 };
 
 const showPlanStep = (index: number) => {
+  if (!arePlanStepsActive.value) {
+    return;
+  }
+
   currentPlanStep.value = index;
   replayPlanStepDemo(index);
   startPlanStepProgress(index);
 };
 
 const finishPlanStep = (index: number, runId = activePlanStepRun) => {
+  if (!arePlanStepsActive.value) {
+    return;
+  }
+
   if (index !== currentPlanStep.value || runId !== activePlanStepRun) {
     return;
   }
@@ -1062,6 +1280,10 @@ const handlePlanDemoMessage = (event: MessageEvent) => {
     return;
   }
 
+  if (!arePlanStepsActive.value) {
+    return;
+  }
+
   if (event.data?.type !== "plan-demo-complete" || typeof event.data.step !== "number") {
     return;
   }
@@ -1070,6 +1292,10 @@ const handlePlanDemoMessage = (event: MessageEvent) => {
 };
 
 const selectPlanStep = (index: number) => {
+  if (!arePlanStepsActive.value) {
+    return;
+  }
+
   showPlanStep(index);
 };
 
@@ -1078,6 +1304,7 @@ const playSummaryPreviewDemo = () => {
     return;
   }
 
+  isSummarySectionInView.value = true;
   updateSummaryCursorTarget();
   isSummaryPreviewReady.value = false;
   isSummaryPreviewDemoActive.value = false;
@@ -1092,6 +1319,25 @@ const playSummaryPreviewDemo = () => {
   queueSummaryPreviewTimer(() => {
     startSummaryPreviewProcessing();
   }, 1500);
+};
+
+const playPlanStepsDemo = () => {
+  if (arePlanStepsActive.value) {
+    return;
+  }
+
+  arePlanStepsActive.value = true;
+  currentPlanStep.value = 0;
+  planStepProgress.value = 0;
+  showPlanStep(0);
+};
+
+const resetPlanStepsDemo = () => {
+  arePlanStepsActive.value = false;
+  currentPlanStep.value = 0;
+  planStepProgress.value = 0;
+  activePlanStepRun += 1;
+  clearPlanStepTimers();
 };
 
 const onboardingSteps = [
@@ -1188,59 +1434,81 @@ const submitOnboarding = () => {
 };
 
 onMounted(() => {
+  if (isOnboardingRoute.value) {
+    return;
+  }
+
   updateHeaderScroll();
   startHeroTypewriter();
-  startMindMapDemo();
   setAnatomyVideoPlaybackRate();
   window.addEventListener("scroll", updateHeaderScroll, { passive: true });
   window.addEventListener("resize", handleSummaryLayoutChange, { passive: true });
   window.addEventListener("message", handlePlanDemoMessage);
   updateSummaryCursorTarget();
 
-  if (featuresSectionRef.value && "IntersectionObserver" in window) {
-    summaryPreviewObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.45) {
-          playSummaryPreviewDemo();
-          return;
-        }
+  heroVideoObserver = observeSectionVisibility(heroVideoSectionRef.value, {
+    onEnter: playHeroVideoPreview,
+    onExit: resetHeroVideoPreview,
+    enterRatio: 0.25,
+    exitRatio: 0.05,
+  });
 
-        if (!entry.isIntersecting || entry.intersectionRatio < 0.12) {
-          resetSummaryPreviewDemo();
-        }
-      },
-      { threshold: [0, 0.12, 0.45, 0.6] },
-    );
+  planStepsObserver = observeSectionVisibility(planStepsSectionRef.value, {
+    onEnter: playPlanStepsDemo,
+    onExit: resetPlanStepsDemo,
+    enterRatio: 0.2,
+    exitRatio: 0.05,
+  });
 
-    summaryPreviewObserver.observe(featuresSectionRef.value);
-  } else {
-    playSummaryPreviewDemo();
-  }
+  summaryPreviewObserver = observeSectionVisibility(featuresSectionRef.value, {
+    onEnter: playSummaryPreviewDemo,
+    onExit: resetSummaryPreviewDemo,
+    enterRatio: 0.35,
+    exitRatio: 0.08,
+  });
 
-  if (planStepsSectionRef.value && "IntersectionObserver" in window) {
-    planStepsObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
-          if (!arePlanStepsInView) {
-            arePlanStepsInView = true;
-            showPlanStep(currentPlanStep.value);
-          }
-          return;
-        }
+  mindMapObserver = observeSectionVisibility(mindMapSectionRef.value, {
+    onEnter: playMindMapDemo,
+    onExit: resetMindMapDemo,
+    enterRatio: 0.25,
+    exitRatio: 0.05,
+  });
 
-        if (!entry.isIntersecting || entry.intersectionRatio < 0.12) {
-          arePlanStepsInView = false;
-          clearPlanStepTimers();
-          planStepProgress.value = 0;
-        }
-      },
-      { threshold: [0, 0.12, 0.35] },
-    );
+  whiteboardObserver = observeSectionVisibility(whiteboardSectionRef.value, {
+    onEnter: playWhiteboardVideoPreview,
+    onExit: resetWhiteboardVideoPreview,
+    enterRatio: 0.25,
+    exitRatio: 0.05,
+  });
 
-    planStepsObserver.observe(planStepsSectionRef.value);
-  } else {
-    showPlanStep(currentPlanStep.value);
-  }
+  anatomyObserver = observeSectionVisibility(anatomySectionRef.value, {
+    onEnter: playAnatomyVideoPreview,
+    onExit: resetAnatomyVideoPreview,
+    enterRatio: 0.25,
+    exitRatio: 0.05,
+  });
+
+  socialProofObserver = observeSectionVisibility(socialProofSectionRef.value, {
+    onEnter: () => {
+      isSocialProofSectionInView.value = true;
+    },
+    onExit: () => {
+      isSocialProofSectionInView.value = false;
+    },
+    enterRatio: 0.18,
+    exitRatio: 0.05,
+  });
+
+  faqObserver = observeSectionVisibility(faqSectionRef.value, {
+    onEnter: () => {
+      isFaqSectionInView.value = true;
+    },
+    onExit: () => {
+      isFaqSectionInView.value = false;
+    },
+    enterRatio: 0.18,
+    exitRatio: 0.05,
+  });
 
 });
 
@@ -1259,6 +1527,30 @@ onBeforeUnmount(() => {
 
   if (planStepsObserver) {
     planStepsObserver.disconnect();
+  }
+
+  if (heroVideoObserver) {
+    heroVideoObserver.disconnect();
+  }
+
+  if (mindMapObserver) {
+    mindMapObserver.disconnect();
+  }
+
+  if (whiteboardObserver) {
+    whiteboardObserver.disconnect();
+  }
+
+  if (anatomyObserver) {
+    anatomyObserver.disconnect();
+  }
+
+  if (socialProofObserver) {
+    socialProofObserver.disconnect();
+  }
+
+  if (faqObserver) {
+    faqObserver.disconnect();
   }
 
 });
@@ -2740,6 +3032,21 @@ a {
   pointer-events: none;
 }
 
+.features-section:not(.is-in-view) .features-copy,
+.features-section:not(.is-in-view) .features-summary-card {
+  animation: none;
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.features-section.is-in-view .features-copy {
+  animation: enterUp 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.features-section.is-in-view .features-summary-card {
+  animation: featureCardEnter 820ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+
 .features-anatomy-card {
   aspect-ratio: 172 / 97;
   min-height: 0;
@@ -2759,6 +3066,27 @@ a {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.features-whiteboard-card {
+  background: #eef3f7;
+  color: #172033;
+}
+
+.features-whiteboard-card::before {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(8, 16, 23, 0.02), rgba(8, 16, 23, 0.08)),
+    radial-gradient(circle at 18% 12%, rgba(27, 209, 131, 0.14), transparent 28%);
+}
+
+.features-whiteboard-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .features-mindmap-card {
@@ -3491,6 +3819,25 @@ a {
   animation: testimonialsScroll 30s linear infinite;
 }
 
+.social-proof-section:not(.is-in-view) .testimonials-heading {
+  animation: none;
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.social-proof-section:not(.is-in-view) .testimonial-scroll {
+  animation-name: none;
+  transform: translateY(0);
+}
+
+.social-proof-section.is-in-view .testimonials-heading {
+  animation: enterUp 820ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.social-proof-section.is-in-view .testimonial-scroll {
+  animation-name: testimonialsScroll;
+}
+
 .testimonial-card {
   width: 100%;
   padding: clamp(20px, 2.4vw, 28px);
@@ -3700,6 +4047,21 @@ a {
   margin: 34px auto 0;
   padding: 18px;
   text-align: center;
+  animation: enterUp 700ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both;
+}
+
+.faq-section:not(.is-in-view) .faq-header,
+.faq-section:not(.is-in-view) .faq-contact {
+  animation: none;
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+.faq-section.is-in-view .faq-header {
+  animation: enterUp 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.faq-section.is-in-view .faq-contact {
   animation: enterUp 700ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both;
 }
 
