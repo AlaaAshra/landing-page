@@ -4281,6 +4281,21 @@ a {
     justify-self: start;
   }
 
+  .features-mindmap-card {
+    aspect-ratio: 4 / 3;
+  }
+
+  .features-mindmap-card .mindmap-world,
+  .features-mindmap-card.is-first .mindmap-world,
+  .features-mindmap-card.is-focus-def .mindmap-world,
+  .features-mindmap-card.is-def-expanded .mindmap-world,
+  .features-mindmap-card.is-focus-term .mindmap-world,
+  .features-mindmap-card.is-term-expanded .mindmap-world,
+  .features-mindmap-card.is-full .mindmap-world,
+  .features-mindmap-card.is-collapse .mindmap-world {
+    transform: translate(-50%, -50%) scale(0.44);
+  }
+
   .faq-shell {
     grid-template-columns: 1fr;
   }
@@ -4554,6 +4569,46 @@ a {
   .features-anatomy-card {
     min-height: 0;
     padding: 0;
+  }
+
+  .features-mindmap-card {
+    min-height: 320px;
+  }
+
+  .features-mindmap-card .mindmap-demo-header {
+    height: 64px;
+    padding: 0 16px;
+  }
+
+  .features-mindmap-card .mindmap-viewport {
+    inset: 64px 0 0;
+  }
+
+  .features-mindmap-card .mindmap-controls {
+    top: 78px;
+    left: 14px;
+    gap: 8px;
+  }
+
+  .features-mindmap-card .mindmap-controls span {
+    width: 28px;
+    height: 28px;
+  }
+
+  .features-mindmap-card .mindmap-controls svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .features-mindmap-card .mindmap-world,
+  .features-mindmap-card.is-first .mindmap-world,
+  .features-mindmap-card.is-focus-def .mindmap-world,
+  .features-mindmap-card.is-def-expanded .mindmap-world,
+  .features-mindmap-card.is-focus-term .mindmap-world,
+  .features-mindmap-card.is-term-expanded .mindmap-world,
+  .features-mindmap-card.is-full .mindmap-world,
+  .features-mindmap-card.is-collapse .mindmap-world {
+    transform: translate(-50%, -50%) scale(0.34);
   }
 
   .features-card-header {
