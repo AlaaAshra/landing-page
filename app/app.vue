@@ -1,131 +1,5 @@
 ﻿<template>
-  <main v-if="isOnboardingRoute" class="onboarding-page">
-    <header class="onboarding-header">
-      <a class="brand-link" href="/" aria-label="MedicalStudent.ai home">
-        <img class="brand-logo" src="/logo4.png" alt="Medical Student AI" />
-      </a>
-      <a class="onboarding-login" href="/login">Login</a>
-    </header>
-
-    <section class="onboarding-shell" aria-label="Medical exam plan onboarding">
-      <form class="onboarding-card" @submit.prevent="submitOnboarding">
-        <div class="onboarding-progress" aria-label="Onboarding progress">
-          <button
-            v-for="(step, index) in onboardingSteps"
-            :key="step.id"
-            class="onboarding-progress-step"
-            :class="{ 'is-active': onboardingStep === index, 'is-complete': index < onboardingStep }"
-            type="button"
-            :disabled="index > onboardingStep"
-            @click="goToOnboardingStep(index)"
-          >
-            <span>{{ index + 1 }}</span>
-            <strong>{{ step.title }}</strong>
-          </button>
-        </div>
-
-        <div class="onboarding-progress-bar" aria-hidden="true">
-          <span :style="{ width: `${onboardingProgress}%` }"></span>
-        </div>
-
-        <Transition name="onboarding-step" mode="out-in">
-          <section :key="onboardingSteps[onboardingStep].id" class="onboarding-step-panel">
-            <div class="onboarding-step-heading">
-              <h2>{{ onboardingSteps[onboardingStep].heading }}</h2>
-              <span>{{ onboardingSteps[onboardingStep].description }}</span>
-            </div>
-
-            <div v-if="onboardingStep === 0" class="onboarding-fields">
-              <label class="onboarding-field">
-                <span>Full name</span>
-                <input v-model="onboardingForm.name" type="text" autocomplete="name" placeholder="Your name" />
-              </label>
-              <label class="onboarding-field">
-                <span>Email address</span>
-                <input v-model="onboardingForm.email" type="email" autocomplete="email" placeholder="you@example.com" />
-              </label>
-              <label class="onboarding-field">
-                <span>Current role</span>
-                <select v-model="onboardingForm.role">
-                  <option value="" disabled>Select your role</option>
-                  <option>Medical student</option>
-                  <option>Resident</option>
-                  <option>PA student</option>
-                  <option>Nursing student</option>
-                  <option>Other medical learner</option>
-                </select>
-              </label>
-              <label class="onboarding-field">
-                <span>Preferred language</span>
-                <select v-model="onboardingForm.language">
-                  <option value="" disabled>Select your language</option>
-                  <option v-for="language in languageOptions" :key="language">{{ language }}</option>
-                </select>
-              </label>
-            </div>
-
-            <div v-else-if="onboardingStep === 1" class="onboarding-option-grid">
-              <label v-for="exam in examOptions" :key="exam" class="onboarding-option" :class="{ 'is-selected': onboardingForm.exam === exam }">
-                <input v-model="onboardingForm.exam" type="radio" name="exam" :value="exam" />
-                <span>{{ exam }}</span>
-              </label>
-              <label class="onboarding-field onboarding-field-full">
-                <span>Add exam resource or custom exam</span>
-                <textarea v-model="onboardingForm.customExam" placeholder="Paste a syllabus, topic list, or describe your exam"></textarea>
-              </label>
-            </div>
-
-            <div v-else-if="onboardingStep === 2" class="onboarding-fields">
-              <label class="onboarding-field">
-                <span>Exam date</span>
-                <input v-model="onboardingForm.examDate" type="date" />
-              </label>
-              <div class="onboarding-field onboarding-field-full">
-                <span>Study days</span>
-                <div class="onboarding-chip-grid">
-                  <label v-for="day in studyDays" :key="day" class="onboarding-chip" :class="{ 'is-selected': onboardingForm.studyDays.includes(day) }">
-                    <input v-model="onboardingForm.studyDays" type="checkbox" :value="day" />
-                    <span>{{ day }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div v-else class="onboarding-summary">
-              <div class="summary-card">
-                <span>Exam</span>
-                <strong>{{ onboardingForm.exam || "Custom exam" }}</strong>
-              </div>
-              <div class="summary-card">
-                <span>Schedule</span>
-                <strong>{{ onboardingForm.examDate || "Date pending" }}</strong>
-              </div>
-              <div class="summary-card">
-                <span>Study days</span>
-                <strong>{{ onboardingForm.studyDays.length ? onboardingForm.studyDays.join(", ") : "Not selected" }}</strong>
-              </div>
-              <div class="summary-card">
-                <span>Language</span>
-                <strong>{{ onboardingForm.language || "Not selected" }}</strong>
-              </div>
-              <p>User must create an account to continue and save the personalized study plan.</p>
-            </div>
-          </section>
-        </Transition>
-
-        <div class="onboarding-actions">
-          <button class="onboarding-secondary" type="button" :disabled="onboardingStep === 0" @click="previousOnboardingStep">
-            Back
-          </button>
-          <button class="onboarding-primary" type="submit" :disabled="!isOnboardingStepValid || isOnboardingSubmitting">
-            {{ onboardingStep === onboardingSteps.length - 1 ? (isOnboardingSubmitting ? "Preparing..." : "Create account") : "Next" }}
-          </button>
-        </div>
-      </form>
-    </section>
-  </main>
-
-  <main v-else class="landing-page">
+  <main class="landing-page">
     <header class="site-header" :class="{ 'is-scrolled': isHeaderScrolled }">
       <nav class="site-nav" aria-label="Primary">
         <a class="brand-link" href="/" aria-label="MedicalStudent.ai home">
@@ -154,7 +28,7 @@
             The official AI for medical exam preparation, built to help you reduce study time, learn smarter, and perform better.
           </p>
 
-          <a class="hero-cta" href="/onboarding">
+          <a class="hero-cta" href="/signup">
             <span>Get Started</span>
             <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
               <path d="M5 12h14" />
@@ -300,7 +174,7 @@
                 <div class="visual-card-stack">
                   <span v-for="item in step.previewItems" :key="item">{{ item }}</span>
                 </div>
-                <a v-if="step.cta" class="feature-preview-button" href="/onboarding">{{ step.cta }}</a>
+                <a v-if="step.cta" class="feature-preview-button" href="/signup">{{ step.cta }}</a>
                 </div>
               </template>
             </div>
@@ -326,7 +200,7 @@
           <p class="features-description">
             Turn lectures, videos, PDFs, and question explanations into fast, exam-focused summaries you can review before every study session.
           </p>
-          <a class="features-cta" href="/onboarding">
+          <a class="features-cta" href="/signup">
             <span aria-hidden="true"></span>
             DISCOVER
           </a>
@@ -442,7 +316,7 @@
           <p class="features-description">
             Turn any lecture or source into a visual mind map &mdash; see how every topic connects, drill into sub-branches, and study the big picture at a glance.
           </p>
-          <a class="features-cta" href="/onboarding">
+          <a class="features-cta" href="/signup">
             <span aria-hidden="true"></span>
             DISCOVER
           </a>
@@ -548,7 +422,7 @@
           <p class="features-description">
             Use the whiteboard to make learning interactive &mdash; add images and take notes as you study.
           </p>
-          <a class="features-cta" href="/onboarding">
+          <a class="features-cta" href="/signup">
             <span aria-hidden="true"></span>
             DISCOVER
           </a>
@@ -584,7 +458,7 @@
           <p class="features-description">
             Toggle body systems on and off, rotate structures, and inspect every detail in an interactive 3D atlas built for exam prep â€” no textbook diagrams required.
           </p>
-          <a class="features-cta" href="/onboarding">
+          <a class="features-cta" href="/signup">
             <span aria-hidden="true"></span>
             DISCOVER
           </a>
@@ -711,7 +585,7 @@
           </div>
           <p class="faq-contact-title">Ready to start?</p>
           <p class="faq-contact-copy">Create your personalized study plan and prepare smarter.</p>
-          <a class="faq-contact-button" href="/onboarding">Start Free Trial</a>
+          <a class="faq-contact-button" href="/signup">Start Free Trial</a>
         </div>
       </div>
     </section>
@@ -719,10 +593,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
-
-const route = useRoute();
-const isOnboardingRoute = computed(() => route.path === "/onboarding");
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
 const planSteps = [
   {
@@ -777,8 +648,6 @@ const summaryThumbnailFallback = "https://img.youtube.com/vi/GGtwJ-SGXTA/hqdefau
 const currentPlanStep = ref(0);
 const planStepProgress = ref(0);
 const isHeaderScrolled = ref(false);
-const onboardingStep = ref(0);
-const isOnboardingSubmitting = ref(false);
 const heroVideoSectionRef = ref<HTMLElement | null>(null);
 const featuresSectionRef = ref<HTMLElement | null>(null);
 const planStepsSectionRef = ref<HTMLElement | null>(null);
@@ -1340,104 +1209,7 @@ const resetPlanStepsDemo = () => {
   clearPlanStepTimers();
 };
 
-const onboardingSteps = [
-  {
-    id: "profile",
-    title: "Profile",
-    heading: "Tell us about yourself",
-    description: "Start with the basic details we need to personalize your study workspace.",
-  },
-  {
-    id: "exam",
-    title: "Exam",
-    heading: "Select your exam",
-    description: "Choose a common medical exam path or add your own exam resource.",
-  },
-  {
-    id: "schedule",
-    title: "Schedule",
-    heading: "Set your timeline",
-    description: "Add your exam date and study days so the plan fits your real week.",
-  },
-  {
-    id: "account",
-    title: "Account",
-    heading: "Save your personalized plan",
-    description: "Create an account next so your plan and progress are saved.",
-  },
-];
-
-const examOptions = ["USMLE Step 1", "USMLE Step 2 CK", "COMLEX", "NCLEX", "PANCE", "Shelf Exam"];
-const studyDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const languageOptions = ["English", "Arabic", "Spanish", "French", "German", "Turkish", "Portuguese", "Other"];
-
-const onboardingForm = reactive({
-  name: "",
-  email: "",
-  role: "",
-  language: "",
-  exam: "",
-  customExam: "",
-  examDate: "",
-  studyDays: [] as string[],
-});
-
-const onboardingProgress = computed(() => {
-  return (onboardingStep.value / (onboardingSteps.length - 1)) * 100;
-});
-
-const isOnboardingStepValid = computed(() => {
-  switch (onboardingStep.value) {
-    case 0:
-      return onboardingForm.name.trim() !== "" && onboardingForm.email.trim() !== "" && onboardingForm.language !== "";
-    case 1:
-      return onboardingForm.exam !== "" || onboardingForm.customExam.trim() !== "";
-    case 2:
-      return onboardingForm.examDate !== "" && onboardingForm.studyDays.length > 0;
-    default:
-      return true;
-  }
-});
-
-const goToOnboardingStep = (index: number) => {
-  if (index <= onboardingStep.value) {
-    onboardingStep.value = index;
-  }
-};
-
-const nextOnboardingStep = () => {
-  if (onboardingStep.value < onboardingSteps.length - 1 && isOnboardingStepValid.value) {
-    onboardingStep.value += 1;
-  }
-};
-
-const previousOnboardingStep = () => {
-  if (onboardingStep.value > 0) {
-    onboardingStep.value -= 1;
-  }
-};
-
-const submitOnboarding = () => {
-  if (!isOnboardingStepValid.value) {
-    return;
-  }
-
-  if (onboardingStep.value < onboardingSteps.length - 1) {
-    nextOnboardingStep();
-    return;
-  }
-
-  isOnboardingSubmitting.value = true;
-  window.setTimeout(() => {
-    window.location.href = "/signup";
-  }, 500);
-};
-
 onMounted(() => {
-  if (isOnboardingRoute.value) {
-    return;
-  }
-
   updateHeaderScroll();
   startHeroTypewriter();
   setAnatomyVideoPlaybackRate();
@@ -1703,434 +1475,6 @@ a {
   min-height: 100vh;
   overflow-x: hidden;
   background: #ffffff;
-}
-
-.onboarding-page {
-  --onboarding-white: #ffffff;
-  --onboarding-text-muted: rgba(51, 58, 63, 0.64);
-  --onboarding-text-soft: rgba(51, 58, 63, 0.42);
-  --onboarding-border: rgba(51, 58, 63, 0.14);
-  --onboarding-neutral: rgba(51, 58, 63, 0.1);
-  --onboarding-disabled-bg: rgba(51, 58, 63, 0.16);
-  --onboarding-disabled-text: rgba(51, 58, 63, 0.42);
-  min-height: 100vh;
-  overflow-x: hidden;
-  padding: clamp(12px, 2vw, 24px) clamp(18px, 3vw, 34px) clamp(10px, 2vw, 18px);
-  color: var(--brand-tech-charcoal);
-  font-family: var(--brand-body-font);
-  background:
-    radial-gradient(circle at 50% 42%, rgba(27, 209, 131, 0.18) 0%, rgba(27, 209, 131, 0.09) 28%, transparent 56%),
-    linear-gradient(135deg, rgba(27, 166, 209, 0.1) 0%, var(--brand-cloud-grey) 44%, rgba(27, 209, 131, 0.1) 100%);
-}
-
-.onboarding-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: min(1120px, 100%);
-  margin: 0 auto;
-}
-
-.onboarding-login {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 0 14px;
-  border-radius: 999px;
-  color: var(--brand-tech-charcoal);
-  background: rgba(245, 247, 250, 0.72);
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.onboarding-login:hover,
-.onboarding-login:focus-visible {
-  color: var(--brand-tech-charcoal);
-}
-
-.onboarding-shell {
-  display: grid;
-  place-items: center;
-  width: min(720px, 100%);
-  min-height: calc(100svh - 74px);
-  margin: 0 auto;
-  padding: clamp(10px, 2.4vh, 20px) 0;
-}
-
-.onboarding-card {
-  width: min(540px, 100%);
-  justify-self: center;
-  overflow: hidden;
-  border: 1px solid var(--onboarding-border);
-  border-radius: 8px;
-  background: var(--onboarding-white);
-  box-shadow:
-    0 22px 64px rgba(27, 209, 131, 0.18),
-    0 10px 34px rgba(51, 58, 63, 0.08);
-  animation: previewEnter 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.onboarding-progress {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  padding: 14px 18px 9px;
-}
-
-.onboarding-progress-step {
-  display: grid;
-  justify-items: center;
-  gap: 5px;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  color: var(--onboarding-text-soft);
-  background: transparent;
-  cursor: pointer;
-  font: inherit;
-}
-
-.onboarding-progress-step:disabled {
-  cursor: default;
-}
-
-.onboarding-progress-step span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  background: var(--onboarding-neutral);
-  color: var(--onboarding-text-muted);
-  font-size: 11px;
-  font-weight: 700;
-  transition:
-    color 180ms ease,
-    background-color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.onboarding-progress-step strong {
-  overflow: hidden;
-  width: 100%;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1.1;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.onboarding-progress-step.is-active,
-.onboarding-progress-step.is-complete {
-  color: var(--brand-tech-charcoal);
-}
-
-.onboarding-progress-step.is-active span,
-.onboarding-progress-step.is-complete span {
-  color: var(--onboarding-white);
-  background: var(--brand-vital-green);
-}
-
-.onboarding-progress-step.is-active span {
-  box-shadow: 0 0 0 5px rgba(27, 209, 131, 0.18);
-}
-
-.onboarding-progress-bar {
-  height: 3px;
-  margin: 0 18px;
-  overflow: hidden;
-  background: var(--onboarding-neutral);
-}
-
-.onboarding-progress-bar span {
-  display: block;
-  height: 100%;
-  background: var(--brand-vital-green);
-  transition: width 260ms ease;
-}
-
-.onboarding-step-panel {
-  min-height: 248px;
-  padding: 22px 28px 0;
-}
-
-.onboarding-step-heading {
-  margin-bottom: 16px;
-}
-
-.onboarding-step-heading h2 {
-  margin: 0;
-  color: var(--brand-tech-charcoal);
-  font-family: var(--brand-heading-font);
-  font-size: clamp(24px, 2.6vw, 32px);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.onboarding-step-heading > span {
-  display: block;
-  margin-top: 8px;
-  color: var(--onboarding-text-muted);
-  font-family: var(--brand-heading-font);
-  font-size: 14px;
-  line-height: 1.36;
-}
-
-.onboarding-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 14px;
-}
-
-.onboarding-field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-
-.onboarding-field-full {
-  grid-column: 1 / -1;
-}
-
-.onboarding-field > span {
-  color: var(--brand-tech-charcoal);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.onboarding-field input,
-.onboarding-field select,
-.onboarding-field textarea {
-  width: 100%;
-  min-height: 38px;
-  border: 1px solid var(--onboarding-border);
-  border-radius: 14px;
-  color: var(--brand-tech-charcoal);
-  background: var(--onboarding-white);
-  accent-color: var(--brand-vital-green);
-  font: inherit;
-  font-size: 14px;
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.onboarding-field input,
-.onboarding-field select {
-  padding: 0 12px;
-}
-
-.onboarding-field textarea {
-  min-height: 72px;
-  resize: vertical;
-  padding: 12px;
-  line-height: 1.4;
-}
-
-.onboarding-field input:focus,
-.onboarding-field select:focus,
-.onboarding-field textarea:focus {
-  border-color: var(--brand-vital-green);
-  outline: 3px solid rgba(27, 209, 131, 0.2);
-}
-
-.onboarding-option-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.onboarding-option-grid.compact {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.onboarding-option,
-.onboarding-chip {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 14px;
-  color: var(--brand-tech-charcoal);
-  background: var(--onboarding-white);
-  cursor: pointer;
-  font-weight: 700;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-}
-
-.onboarding-option {
-  min-height: 40px;
-  padding: 0 12px;
-}
-
-.onboarding-chip {
-  min-height: 34px;
-  justify-content: center;
-  padding: 0 12px;
-  font-size: 13px;
-}
-
-.onboarding-option input,
-.onboarding-chip input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.onboarding-option span,
-.onboarding-chip span {
-  overflow-wrap: anywhere;
-}
-
-.onboarding-option:hover,
-.onboarding-chip:hover,
-.onboarding-option.is-selected,
-.onboarding-chip.is-selected {
-  border-color: var(--brand-vital-green);
-  color: var(--onboarding-white);
-  background: var(--brand-vital-green);
-}
-
-.onboarding-option.is-selected,
-.onboarding-chip.is-selected {
-  transform: translateY(-1px);
-}
-
-.onboarding-chip-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.onboarding-summary {
-  display: grid;
-  gap: 10px;
-}
-
-.summary-card {
-  display: grid;
-  gap: 4px;
-  padding: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background: var(--brand-cloud-grey);
-}
-
-.summary-card span {
-  color: var(--onboarding-text-muted);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.summary-card strong {
-  color: var(--brand-tech-charcoal);
-  font-size: 15px;
-  line-height: 1.25;
-}
-
-.onboarding-summary p {
-  margin: 2px 0 0;
-  color: var(--onboarding-text-muted);
-  font-size: 14px;
-  line-height: 1.38;
-}
-
-.onboarding-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 28px 20px;
-}
-
-.onboarding-primary,
-.onboarding-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 38px;
-  min-width: 112px;
-  padding: 0 18px;
-  border-radius: 14px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease,
-    opacity 180ms ease;
-}
-
-.onboarding-primary {
-  border: 1px solid var(--brand-vital-green);
-  color: var(--onboarding-white);
-  background: var(--brand-vital-green);
-}
-
-.onboarding-primary:hover,
-.onboarding-primary:focus-visible {
-  border-color: var(--brand-vital-green);
-  background: var(--brand-vital-green);
-}
-
-.onboarding-secondary {
-  border: 1px solid var(--brand-tech-charcoal);
-  color: var(--brand-tech-charcoal);
-  background: transparent;
-}
-
-.onboarding-primary:disabled,
-.onboarding-secondary:disabled {
-  cursor: not-allowed;
-  opacity: 1;
-}
-
-.onboarding-primary:disabled {
-  border-color: var(--onboarding-disabled-bg);
-  color: var(--onboarding-disabled-text);
-  background: var(--onboarding-disabled-bg);
-}
-
-.onboarding-secondary:disabled {
-  border-color: var(--onboarding-border);
-  color: var(--onboarding-disabled-text);
-  background: rgba(245, 247, 250, 0.58);
-}
-
-.onboarding-page .brand-link:focus-visible,
-.onboarding-page .onboarding-login:focus-visible,
-.onboarding-page .onboarding-primary:focus-visible,
-.onboarding-page .onboarding-secondary:focus-visible,
-.onboarding-page .onboarding-progress-step:focus-visible {
-  outline-color: var(--brand-vital-green);
-}
-
-.onboarding-step-enter-active,
-.onboarding-step-leave-active {
-  transition:
-    opacity 220ms ease,
-    transform 220ms ease;
-}
-
-.onboarding-step-enter-from {
-  opacity: 0;
-  transform: translateX(24px);
-}
-
-.onboarding-step-leave-to {
-  opacity: 0;
-  transform: translateX(-24px);
 }
 
 .hero-section {
@@ -4123,11 +3467,7 @@ a {
 .feature-step:focus-visible,
 .feature-preview-button:focus-visible,
 .features-cta:focus-visible,
-.brand-link:focus-visible,
-.onboarding-login:focus-visible,
-.onboarding-primary:focus-visible,
-.onboarding-secondary:focus-visible,
-.onboarding-progress-step:focus-visible {
+.brand-link:focus-visible {
   outline: 2px solid var(--deep-blue);
   outline-offset: 4px;
 }
@@ -4235,15 +3575,6 @@ a {
 
   .section-shell {
     width: min(100% - 36px, 720px);
-  }
-
-  .onboarding-shell {
-    min-height: auto;
-    padding: 40px 0;
-  }
-
-  .onboarding-card {
-    justify-self: center;
   }
 
   .feature-steps-grid {
@@ -4462,50 +3793,6 @@ a {
 
   .section-shell {
     width: calc(100% - 36px);
-  }
-
-  .onboarding-page {
-    padding: 10px 16px 16px;
-  }
-
-  .onboarding-header .brand-link {
-    width: 92px;
-  }
-
-  .onboarding-shell {
-    min-height: calc(100svh - 58px);
-    padding: 10px 0;
-  }
-
-  .onboarding-progress {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px 6px;
-    padding: 12px 14px 8px;
-  }
-
-  .onboarding-progress-step strong {
-    display: none;
-  }
-
-  .onboarding-step-panel {
-    min-height: 274px;
-    padding: 18px 16px 0;
-  }
-
-  .onboarding-fields,
-  .onboarding-option-grid,
-  .onboarding-option-grid.compact {
-    grid-template-columns: 1fr;
-  }
-
-  .onboarding-actions {
-    padding: 14px 16px 16px;
-  }
-
-  .onboarding-primary,
-  .onboarding-secondary {
-    min-width: 0;
-    flex: 1;
   }
 
   .feature-steps-shell h2 {
