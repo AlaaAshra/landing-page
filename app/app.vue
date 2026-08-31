@@ -443,6 +443,43 @@
     </section>
 
     <section
+      id="question-bank-feature"
+      ref="questionBankSectionRef"
+      class="features-section"
+      :class="{ 'is-in-view': isQuestionBankSectionInView }"
+      aria-labelledby="features-question-bank-title"
+    >
+      <div class="section-shell features-shell features-anatomy-shell features-question-bank-shell">
+        <div class="features-copy">
+          <p class="features-kicker">QUESTION BANK</p>
+          <h2 id="features-question-bank-title">
+            <span>Practice with real</span>
+            <span>exam-style questions</span>
+          </h2>
+          <p class="features-description">
+            Thousands of board-style questions with instant explanations, matched to your exam and your weak spots, plus an AI tutor you can ask anything while you practice.
+          </p>
+          <a class="features-cta" href="/signup">
+            <span aria-hidden="true"></span>
+            DISCOVER
+          </a>
+        </div>
+
+        <article class="features-summary-card features-anatomy-card" aria-label="MedicalStudent.ai question bank feature preview">
+          <video
+            ref="questionBankVideoRef"
+            class="features-anatomy-video"
+            src="/videos/question-bank-feature.mp4"
+            muted
+            loop
+            playsinline
+            preload="auto"
+          ></video>
+        </article>
+      </div>
+    </section>
+
+    <section
       ref="anatomySectionRef"
       class="features-section"
       :class="{ 'is-in-view': isAnatomySectionInView }"
@@ -653,6 +690,7 @@ const featuresSectionRef = ref<HTMLElement | null>(null);
 const planStepsSectionRef = ref<HTMLElement | null>(null);
 const mindMapSectionRef = ref<HTMLElement | null>(null);
 const whiteboardSectionRef = ref<HTMLElement | null>(null);
+const questionBankSectionRef = ref<HTMLElement | null>(null);
 const anatomySectionRef = ref<HTMLElement | null>(null);
 const socialProofSectionRef = ref<HTMLElement | null>(null);
 const faqSectionRef = ref<HTMLElement | null>(null);
@@ -660,6 +698,7 @@ const summaryCardRef = ref<HTMLElement | null>(null);
 const summaryButtonRef = ref<HTMLButtonElement | null>(null);
 const heroVideoRef = ref<HTMLVideoElement | null>(null);
 const whiteboardVideoRef = ref<HTMLVideoElement | null>(null);
+const questionBankVideoRef = ref<HTMLVideoElement | null>(null);
 const anatomyVideoRef = ref<HTMLVideoElement | null>(null);
 const summaryThumbnailSrc = ref(summaryThumbnailPrimary);
 const summaryCursorStyle = ref({ left: "calc(100% - 86px)", top: "calc(100% - 78px)" });
@@ -671,6 +710,7 @@ const isHeroVideoSectionInView = ref(false);
 const isSummarySectionInView = ref(false);
 const isMindMapSectionInView = ref(false);
 const isWhiteboardSectionInView = ref(false);
+const isQuestionBankSectionInView = ref(false);
 const isAnatomySectionInView = ref(false);
 const isSocialProofSectionInView = ref(false);
 const isFaqSectionInView = ref(false);
@@ -727,6 +767,7 @@ let summaryPreviewObserver: IntersectionObserver | undefined;
 let planStepsObserver: IntersectionObserver | undefined;
 let mindMapObserver: IntersectionObserver | undefined;
 let whiteboardObserver: IntersectionObserver | undefined;
+let questionBankObserver: IntersectionObserver | undefined;
 let anatomyObserver: IntersectionObserver | undefined;
 let socialProofObserver: IntersectionObserver | undefined;
 let faqObserver: IntersectionObserver | undefined;
@@ -915,6 +956,16 @@ const playWhiteboardVideoPreview = () => {
 const resetWhiteboardVideoPreview = () => {
   isWhiteboardSectionInView.value = false;
   resetVideoPreview(whiteboardVideoRef.value);
+};
+
+const playQuestionBankVideoPreview = () => {
+  isQuestionBankSectionInView.value = true;
+  playVideoPreview(questionBankVideoRef.value);
+};
+
+const resetQuestionBankVideoPreview = () => {
+  isQuestionBankSectionInView.value = false;
+  resetVideoPreview(questionBankVideoRef.value);
 };
 
 const resetSummaryPreviewDemo = () => {
@@ -1253,6 +1304,13 @@ onMounted(() => {
     exitRatio: 0.05,
   });
 
+  questionBankObserver = observeSectionVisibility(questionBankSectionRef.value, {
+    onEnter: playQuestionBankVideoPreview,
+    onExit: resetQuestionBankVideoPreview,
+    enterRatio: 0.25,
+    exitRatio: 0.05,
+  });
+
   anatomyObserver = observeSectionVisibility(anatomySectionRef.value, {
     onEnter: playAnatomyVideoPreview,
     onExit: resetAnatomyVideoPreview,
@@ -1311,6 +1369,10 @@ onBeforeUnmount(() => {
 
   if (whiteboardObserver) {
     whiteboardObserver.disconnect();
+  }
+
+  if (questionBankObserver) {
+    questionBankObserver.disconnect();
   }
 
   if (anatomyObserver) {
@@ -2264,6 +2326,10 @@ a {
 
 .features-mindmap-shell .features-copy h2 span {
   white-space: nowrap;
+}
+
+.features-question-bank-shell .features-copy h2 {
+  font-size: clamp(40px, 4.4vw, 58px);
 }
 
 .features-copy {
