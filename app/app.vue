@@ -7,7 +7,7 @@
         </a>
 
         <div class="header-links" aria-label="Sections">
-          <a href="#plan-steps">Use Cases</a>
+          <a href="#use-cases">Use Cases</a>
           <a href="#features">Features</a>
           <a href="#social-proof">Reviews</a>
           <a href="#faq">FAQ</a>
@@ -79,6 +79,7 @@
     </section>
 
     <section
+      id="use-cases"
       ref="heroVideoSectionRef"
       class="hero-video-section"
       :class="{ 'is-in-view': isHeroVideoSectionInView }"
@@ -183,28 +184,29 @@
       </div>
     </section>
 
-    <section
-      id="features"
-      ref="featuresSectionRef"
-      class="features-section"
-      :class="{ 'is-in-view': isSummarySectionInView }"
-      aria-labelledby="features-title"
-    >
-      <div class="section-shell features-shell">
-        <div class="features-copy">
-          <p class="features-kicker">Summarize</p>
-          <h2 id="features-title">
-            <span>Save hours</span>
-            <span>every day</span>
-          </h2>
-          <p class="features-description">
-            Turn lectures, videos, PDFs, and question explanations into fast, exam-focused summaries you can review before every study session.
-          </p>
-          <a class="features-cta" href="/signup">
-            <span aria-hidden="true"></span>
-            DISCOVER
-          </a>
-        </div>
+    <div class="features-band">
+      <section
+        id="features"
+        ref="featuresSectionRef"
+        class="features-section"
+        :class="{ 'is-in-view': isSummarySectionInView }"
+        aria-labelledby="features-title"
+      >
+        <div class="section-shell features-shell">
+          <div class="features-copy">
+            <p class="features-kicker">Summarize</p>
+            <h2 id="features-title">
+              <span>Save hours</span>
+              <span>every day</span>
+            </h2>
+            <p class="features-description">
+              Turn lectures, videos, PDFs, and question explanations into fast, exam-focused summaries you can review before every study session.
+            </p>
+            <a class="features-cta" href="/signup">
+              <span aria-hidden="true"></span>
+              DISCOVER
+            </a>
+          </div>
 
         <article
           class="features-summary-card"
@@ -296,31 +298,31 @@
             </ul>
           </div>
         </article>
-      </div>
-    </section>
-
-    <section
-      id="mind-map-feature"
-      ref="mindMapSectionRef"
-      class="features-section"
-      :class="{ 'is-in-view': isMindMapSectionInView }"
-      aria-labelledby="features-mindmap-title"
-    >
-      <div class="section-shell features-shell features-anatomy-shell features-mindmap-shell">
-        <div class="features-copy">
-          <p class="features-kicker">MIND MAP</p>
-          <h2 id="features-mindmap-title">
-            <span>Map your notes</span>
-            <span>into a mind map</span>
-          </h2>
-          <p class="features-description">
-            Turn any lecture or source into a visual mind map &mdash; see how every topic connects, drill into sub-branches, and study the big picture at a glance.
-          </p>
-          <a class="features-cta" href="/signup">
-            <span aria-hidden="true"></span>
-            DISCOVER
-          </a>
         </div>
+      </section>
+
+      <section
+        id="mind-map-feature"
+        ref="mindMapSectionRef"
+        class="features-section"
+        :class="{ 'is-in-view': isMindMapSectionInView }"
+        aria-labelledby="features-mindmap-title"
+      >
+        <div class="section-shell features-shell features-anatomy-shell features-mindmap-shell">
+          <div class="features-copy">
+            <p class="features-kicker">MIND MAP</p>
+            <h2 id="features-mindmap-title">
+              <span>Map your notes</span>
+              <span>into a mind map</span>
+            </h2>
+            <p class="features-description">
+              Turn any lecture or source into a visual mind map &mdash; see how every topic connects, drill into sub-branches, and study the big picture at a glance.
+            </p>
+            <a class="features-cta" href="/signup">
+              <span aria-hidden="true"></span>
+              DISCOVER
+            </a>
+          </div>
 
         <article
           class="features-summary-card features-anatomy-card features-mindmap-card"
@@ -402,31 +404,31 @@
             </div>
           </div>
         </article>
-      </div>
-    </section>
-
-    <section
-      id="whiteboard-feature"
-      ref="whiteboardSectionRef"
-      class="features-section"
-      :class="{ 'is-in-view': isWhiteboardSectionInView }"
-      aria-labelledby="features-whiteboard-title"
-    >
-      <div class="section-shell features-shell features-anatomy-shell features-mindmap-shell">
-        <div class="features-copy">
-          <p class="features-kicker">WHITEBOARD</p>
-          <h2 id="features-whiteboard-title">
-            <span>Make study</span>
-            <span>interactive</span>
-          </h2>
-          <p class="features-description">
-            Use the whiteboard to make learning interactive &mdash; add images and take notes as you study.
-          </p>
-          <a class="features-cta" href="/signup">
-            <span aria-hidden="true"></span>
-            DISCOVER
-          </a>
         </div>
+      </section>
+
+      <section
+        id="whiteboard-feature"
+        ref="whiteboardSectionRef"
+        class="features-section"
+        :class="{ 'is-in-view': isWhiteboardSectionInView }"
+        aria-labelledby="features-whiteboard-title"
+      >
+        <div class="section-shell features-shell features-anatomy-shell features-mindmap-shell features-media-left-shell">
+          <div class="features-copy">
+            <p class="features-kicker">WHITEBOARD</p>
+            <h2 id="features-whiteboard-title">
+              <span>Make study</span>
+              <span>interactive</span>
+            </h2>
+            <p class="features-description">
+              Use the whiteboard to make learning interactive &mdash; add images and take notes as you study.
+            </p>
+            <a class="features-cta" href="/signup">
+              <span aria-hidden="true"></span>
+              DISCOVER
+            </a>
+          </div>
 
         <article class="features-summary-card features-anatomy-card features-whiteboard-card" aria-label="MedicalStudent.ai whiteboard feature preview">
           <video
@@ -439,31 +441,31 @@
             preload="auto"
           ></video>
         </article>
-      </div>
-    </section>
-
-    <section
-      id="question-bank-feature"
-      ref="questionBankSectionRef"
-      class="features-section"
-      :class="{ 'is-in-view': isQuestionBankSectionInView }"
-      aria-labelledby="features-question-bank-title"
-    >
-      <div class="section-shell features-shell features-anatomy-shell features-question-bank-shell">
-        <div class="features-copy">
-          <p class="features-kicker">QUESTION BANK</p>
-          <h2 id="features-question-bank-title">
-            <span>Practice with real</span>
-            <span>exam-style questions</span>
-          </h2>
-          <p class="features-description">
-            Thousands of board-style questions with instant explanations, matched to your exam and your weak spots, plus an AI tutor you can ask anything while you practice.
-          </p>
-          <a class="features-cta" href="/signup">
-            <span aria-hidden="true"></span>
-            DISCOVER
-          </a>
         </div>
+      </section>
+
+      <section
+        id="question-bank-feature"
+        ref="questionBankSectionRef"
+        class="features-section"
+        :class="{ 'is-in-view': isQuestionBankSectionInView }"
+        aria-labelledby="features-question-bank-title"
+      >
+        <div class="section-shell features-shell features-anatomy-shell features-question-bank-shell features-media-left-shell">
+          <div class="features-copy">
+            <p class="features-kicker">QUESTION BANK</p>
+            <h2 id="features-question-bank-title">
+              <span>Practice with real</span>
+              <span>exam-style questions</span>
+            </h2>
+            <p class="features-description">
+              Thousands of board-style questions with instant explanations, matched to your exam and your weak spots, plus an AI tutor you can ask anything while you practice.
+            </p>
+            <a class="features-cta" href="/signup">
+              <span aria-hidden="true"></span>
+              DISCOVER
+            </a>
+          </div>
 
         <article class="features-summary-card features-anatomy-card" aria-label="MedicalStudent.ai question bank feature preview">
           <video
@@ -476,30 +478,30 @@
             preload="auto"
           ></video>
         </article>
-      </div>
-    </section>
-
-    <section
-      ref="anatomySectionRef"
-      class="features-section"
-      :class="{ 'is-in-view': isAnatomySectionInView }"
-      aria-labelledby="features-anatomy-title"
-    >
-      <div class="section-shell features-shell features-anatomy-shell">
-        <div class="features-copy">
-          <p class="features-kicker">3D ANATOMY</p>
-          <h2 id="features-anatomy-title">
-            <span>See anatomy</span>
-            <span>in real 3D</span>
-          </h2>
-          <p class="features-description">
-            Toggle body systems on and off, rotate structures, and inspect every detail in an interactive 3D atlas built for exam prep â€” no textbook diagrams required.
-          </p>
-          <a class="features-cta" href="/signup">
-            <span aria-hidden="true"></span>
-            DISCOVER
-          </a>
         </div>
+      </section>
+
+      <section
+        ref="anatomySectionRef"
+        class="features-section"
+        :class="{ 'is-in-view': isAnatomySectionInView }"
+        aria-labelledby="features-anatomy-title"
+      >
+        <div class="section-shell features-shell features-anatomy-shell">
+          <div class="features-copy">
+            <p class="features-kicker">3D ANATOMY</p>
+            <h2 id="features-anatomy-title">
+              <span>See anatomy</span>
+              <span>in real 3D</span>
+            </h2>
+            <p class="features-description">
+              Toggle body systems on and off, rotate structures, and inspect every detail in an interactive 3D atlas built for exam prep â€” no textbook diagrams required.
+            </p>
+            <a class="features-cta" href="/signup">
+              <span aria-hidden="true"></span>
+              DISCOVER
+            </a>
+          </div>
 
         <article class="features-summary-card features-anatomy-card" aria-label="MedicalStudent.ai 3D anatomy feature preview">
           <video
@@ -514,8 +516,9 @@
             @play="setAnatomyVideoPlaybackRate"
           ></video>
         </article>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
 
     <section
       id="social-proof"
@@ -607,7 +610,13 @@
 
             <div :id="`faq-answer-${index}`" class="faq-answer">
               <div class="faq-answer-inner">
-                <p>{{ item.answer }}</p>
+                <p v-if="typeof item.answer === 'string'">{{ item.answer }}</p>
+                <p v-else>
+                  <template v-for="(part, partIndex) in item.answer" :key="`${item.question}-${partIndex}`">
+                    <strong v-if="part.strong">{{ part.text }}</strong>
+                    <template v-else>{{ part.text }}</template>
+                  </template>
+                </p>
               </div>
             </div>
           </article>
@@ -1023,7 +1032,10 @@ const startSummaryPreviewProcessing = () => {
   }
 
   clearSummaryPreviewTimers();
-  updateSummaryCursorTarget();
+  if (!isSummaryPreviewDemoActive.value) {
+    updateSummaryCursorTarget();
+  }
+  isSummaryPreviewDemoActive.value = false;
   isSummaryPreviewPressing.value = true;
   isSummaryPreviewScrubbing.value = true;
 
@@ -1436,7 +1448,13 @@ const faqItems = [
   },
   {
     question: "What exams can I prepare for?",
-    answer: "You can prepare for USMLE, PLAB, MCCQE, NCLEX, COMLEX, shelf-style exams, finals, clinical rotations, and targeted topic refreshers.",
+    answer: [
+      { text: "You can prepare for " },
+      { text: "any medical exam", strong: true },
+      { text: ", from major licensing exams like " },
+      { text: "USMLE Step 1, Step 2 CK & Step 3, PLAB 1 & 2, MCCQE, AMC, COMLEX-USA, NZREX Clinical, and PRES", strong: true },
+      { text: ", to medical school finals, clinical rotations, and specialty or subject-specific exams. You can also add your own study sources and materials to personalize your preparation." },
+    ],
   },
   {
     question: "How is MedicalStudent AI different from ChatGPT?",
@@ -1445,10 +1463,6 @@ const faqItems = [
   {
     question: "How does the study plan become personalized?",
     answer: "The workflow adapts around your target topics, progress, missed questions, and the time you have available.",
-  },
-  {
-    question: "Does this replace medical advice or clinical judgment?",
-    answer: "No. MedicalStudent.ai is for education and study support. Always verify clinical decisions with qualified professionals and approved references.",
   },
   {
     question: "Can I review on mobile?",
@@ -1499,6 +1513,30 @@ const toggleFaq = (index: number) => {
 @font-face {
   font-family: "Futura Now Headline";
   src: url("/fonts/FuturaNowHeadlineBold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Helvetica Now Text";
+  src: url("/fonts/HelveticaNowText-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Helvetica Now Text";
+  src: url("/fonts/HelveticaNowText-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Helvetica Now Text";
+  src: url("/fonts/HelveticaNowText-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: block;
@@ -1600,6 +1638,7 @@ a {
   min-width: 0;
   padding: 0 clamp(18px, 4vw, 48px);
   background: transparent;
+  font-family: "Helvetica Now Text", "TT Commons Pro", Arial, sans-serif;
   pointer-events: none;
   animation: enterDown 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -1989,6 +2028,7 @@ a {
 }
 
 .hero-video-section {
+  scroll-margin-top: calc(var(--header-height) + 24px);
   padding: clamp(46px, 7vw, 88px) clamp(20px, 4vw, 48px);
   background: #ffffff;
 }
@@ -2258,23 +2298,22 @@ a {
   font-weight: 700;
 }
 
-.features-section {
+.features-band {
   position: relative;
   overflow: hidden;
-  min-height: clamp(560px, 76svh, 760px);
-  padding: clamp(70px, 8vw, 112px) 0;
-  color: #ffffff;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 18%),
     radial-gradient(circle at 78% 16%, rgba(27, 166, 209, 0.18), transparent 32%),
     radial-gradient(circle at 48% 100%, rgba(27, 209, 131, 0.16), transparent 36%),
     #151515;
+  isolation: isolate;
 }
 
-.features-section::before {
+.features-band::before {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   background-image:
     repeating-linear-gradient(
       56deg,
@@ -2287,11 +2326,12 @@ a {
   pointer-events: none;
 }
 
-.features-section::after {
+.features-band::after {
   content: "";
   position: absolute;
   right: -8vw;
   bottom: -22vw;
+  z-index: 0;
   width: 72vw;
   height: 44vw;
   border-radius: 50%;
@@ -2299,6 +2339,16 @@ a {
   filter: blur(90px);
   opacity: 0.72;
   pointer-events: none;
+}
+
+.features-section {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  min-height: clamp(560px, 76svh, 760px);
+  padding: clamp(70px, 8vw, 112px) 0;
+  color: #ffffff;
+  background: transparent;
 }
 
 .features-shell {
@@ -2321,7 +2371,7 @@ a {
 }
 
 .features-mindmap-shell .features-copy h2 {
-  font-size: clamp(46px, 4.8vw, 66px);
+  font-size: clamp(36px, 4vw, 52px);
 }
 
 .features-mindmap-shell .features-copy h2 span {
@@ -2329,7 +2379,23 @@ a {
 }
 
 .features-question-bank-shell .features-copy h2 {
-  font-size: clamp(40px, 4.4vw, 58px);
+  font-size: clamp(34px, 3.8vw, 50px);
+}
+
+.features-media-left-shell {
+  grid-template-columns: minmax(560px, 1.28fr) minmax(420px, 0.72fr);
+}
+
+.features-media-left-shell .features-summary-card {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.features-media-left-shell .features-copy {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
 }
 
 .features-copy {
@@ -2340,6 +2406,7 @@ a {
 .features-kicker {
   margin: 0;
   color: rgba(245, 247, 250, 0.86);
+  font-family: "Helvetica Now Text", "TT Commons Pro", Arial, sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -2353,7 +2420,7 @@ a {
   margin: 18px 0 0;
   color: rgba(245, 247, 250, 0.94);
   font-family: "Futura Now Headline", "Avenir Next", Avenir, "Century Gothic", Futura, "Trebuchet MS", sans-serif;
-  font-size: clamp(46px, 5.3vw, 72px);
+  font-size: clamp(36px, 4.4vw, 56px);
   font-weight: 500;
   letter-spacing: 0;
   line-height: 0.98;
@@ -3661,12 +3728,23 @@ a {
     gap: 34px;
   }
 
+  .features-media-left-shell .features-copy,
+  .features-media-left-shell .features-summary-card {
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: start;
+  }
+
+  .features-media-left-shell .features-summary-card {
+    order: -1;
+  }
+
   .features-copy {
     max-width: 620px;
   }
 
   .features-mindmap-shell .features-copy h2 {
-    font-size: clamp(40px, 9vw, 56px);
+    font-size: clamp(34px, 7vw, 46px);
   }
 
   .features-mindmap-shell .features-copy h2 span {
@@ -3902,7 +3980,11 @@ a {
   }
 
   .features-copy h2 {
-    font-size: clamp(40px, 12vw, 52px);
+    font-size: clamp(32px, 9vw, 42px);
+  }
+
+  .features-question-bank-shell .features-copy h2 {
+    font-size: clamp(30px, 8vw, 40px);
   }
 
   .features-description {
