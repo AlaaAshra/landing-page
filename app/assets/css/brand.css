@@ -1,3 +1,5 @@
+@layer base, component, lobe-base;
+
 :root {
   --brand-scholars-sky: #1BA6D1;
   --brand-vital-green: #1BD183;
@@ -11,4 +13,37 @@
   --vital-green: var(--brand-vital-green);
   --tech-charcoal: var(--brand-tech-charcoal);
   --cloud-grey: var(--brand-cloud-grey);
+}
+
+@layer component {
+  * {
+    box-sizing: border-box;
+  }
+
+  @keyframes base-button-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  ::selection {
+    color: #000;
+    background-image: initial;
+    background-position-x: initial;
+    background-position-y: initial;
+    background-size: initial;
+    background-repeat: initial;
+    background-attachment: initial;
+    background-origin: initial;
+    background-clip: initial;
+    background-color: #ffef5c;
+    -webkit-text-fill-color: unset !important;
+  }
+
+  * {
+    scrollbar-color: #0000001f transparent;
+    scrollbar-width: thin;
+    box-sizing: border-box;
+    vertical-align: baseline;
+  }
 }

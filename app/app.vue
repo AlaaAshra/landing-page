@@ -1,5 +1,6 @@
 ﻿<template>
-  <main class="landing-page">
+  <OnboardingStepCard v-if="isOnboardingRoute" />
+  <main v-else class="landing-page">
     <header class="site-header" :class="{ 'is-scrolled': isHeaderScrolled }">
       <nav class="site-nav" aria-label="Primary">
         <a class="brand-link" href="/" aria-label="MedicalStudent.ai home">
@@ -136,33 +137,27 @@
               :class="{ 'is-active': currentPlanStep === index, 'has-demo': index <= 2 }"
               aria-hidden="true"
             >
-              <div v-if="arePlanStepsActive && index === 0" class="getting-started-demo-embed">
-                <iframe
-                  :key="`getting-started-demo-${planDemoReplayKey}`"
-                  :src="`/how-to-get-started-demo.html?play=${planDemoReplayKey}`"
-                  title="Make a study plan demo animation"
-                  loading="lazy"
-                  tabindex="-1"
-                ></iframe>
-              </div>
-              <div v-else-if="arePlanStepsActive && index === 1" class="getting-started-demo-embed">
-                <iframe
-                  :key="`step2-add-source-demo-${planSourceDemoReplayKey}`"
-                  :src="`/step2-add-source-demo.html?play=${planSourceDemoReplayKey}`"
-                  title="Add exam source demo animation"
-                  loading="lazy"
-                  tabindex="-1"
-                ></iframe>
-              </div>
-              <div v-else-if="arePlanStepsActive && index === 2" class="getting-started-demo-embed">
-                <iframe
-                  :key="`step3-ask-question-demo-${planQuestionDemoReplayKey}`"
-                  :src="`/step3-ask-question-demo.html?play=${planQuestionDemoReplayKey}`"
-                  title="Ask a study question demo animation"
-                  loading="lazy"
-                  tabindex="-1"
-                ></iframe>
-              </div>
+              <DemoPreviewFrame
+                v-if="arePlanStepsActive && index === 0"
+                :key="`getting-started-demo-${planDemoReplayKey}`"
+                :src="`/how-to-get-started-demo.html?play=${planDemoReplayKey}`"
+                title="Make a study plan demo animation"
+                variant="landing"
+              />
+              <DemoPreviewFrame
+                v-else-if="arePlanStepsActive && index === 1"
+                :key="`step2-add-source-demo-${planSourceDemoReplayKey}`"
+                :src="`/step2-add-source-demo.html?play=${planSourceDemoReplayKey}`"
+                title="Add exam source demo animation"
+                variant="landing"
+              />
+              <DemoPreviewFrame
+                v-else-if="arePlanStepsActive && index === 2"
+                :key="`step3-ask-question-demo-${planQuestionDemoReplayKey}`"
+                :src="`/step3-ask-question-demo.html?play=${planQuestionDemoReplayKey}`"
+                title="Ask a study question demo animation"
+                variant="landing"
+              />
               <template v-else>
                 <div class="visual-toolbar">
                   <span></span>
@@ -639,7 +634,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRoute } from "#app";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import DemoPreviewFrame from "./components/DemoPreviewFrame.vue";
+import OnboardingStepCard from "./components/OnboardingStepCard.vue";
+
+const route = useRoute();
+const isOnboardingRoute = computed(() => route.path === "/onboarding");
 
 const planSteps = [
   {
@@ -782,6 +783,7 @@ let socialProofObserver: IntersectionObserver | undefined;
 let faqObserver: IntersectionObserver | undefined;
 let summaryPreviewTimers: ReturnType<typeof window.setTimeout>[] = [];
 let mindMapTimers: ReturnType<typeof window.setTimeout>[] = [];
+let isLandingPageStarted = false;
 
 type SectionVisibilityHandlers = {
   onEnter: () => void;
@@ -1272,7 +1274,12 @@ const resetPlanStepsDemo = () => {
   clearPlanStepTimers();
 };
 
-onMounted(() => {
+const startLandingPage = () => {
+  if (isLandingPageStarted) {
+    return;
+  }
+
+  isLandingPageStarted = true;
   updateHeaderScroll();
   startHeroTypewriter();
   setAnatomyVideoPlaybackRate();
@@ -1352,9 +1359,14 @@ onMounted(() => {
     exitRatio: 0.05,
   });
 
-});
+};
 
-onBeforeUnmount(() => {
+const stopLandingPage = () => {
+  if (!isLandingPageStarted) {
+    return;
+  }
+
+  isLandingPageStarted = false;
   window.removeEventListener("scroll", updateHeaderScroll);
   window.removeEventListener("resize", handleSummaryLayoutChange);
   window.removeEventListener("message", handlePlanDemoMessage);
@@ -1365,40 +1377,70 @@ onBeforeUnmount(() => {
 
   if (summaryPreviewObserver) {
     summaryPreviewObserver.disconnect();
+    summaryPreviewObserver = undefined;
   }
 
   if (planStepsObserver) {
     planStepsObserver.disconnect();
+    planStepsObserver = undefined;
   }
 
   if (heroVideoObserver) {
     heroVideoObserver.disconnect();
+    heroVideoObserver = undefined;
   }
 
   if (mindMapObserver) {
     mindMapObserver.disconnect();
+    mindMapObserver = undefined;
   }
 
   if (whiteboardObserver) {
     whiteboardObserver.disconnect();
+    whiteboardObserver = undefined;
   }
 
   if (questionBankObserver) {
     questionBankObserver.disconnect();
+    questionBankObserver = undefined;
   }
 
   if (anatomyObserver) {
     anatomyObserver.disconnect();
+    anatomyObserver = undefined;
   }
 
   if (socialProofObserver) {
     socialProofObserver.disconnect();
+    socialProofObserver = undefined;
   }
 
   if (faqObserver) {
     faqObserver.disconnect();
+    faqObserver = undefined;
+  }
+};
+
+const syncRouteExperience = async () => {
+  if (isOnboardingRoute.value) {
+    stopLandingPage();
+    return;
   }
 
+  await nextTick();
+  startLandingPage();
+};
+
+onMounted(() => {
+  void syncRouteExperience();
+});
+
+watch(isOnboardingRoute, () => {
+  void syncRouteExperience();
+});
+
+onBeforeUnmount(() => {
+  stopLandingPage();
 });
 
 const testimonialColumns = [
@@ -2213,20 +2255,6 @@ a {
 .feature-visual-panel.has-demo {
   display: block;
   padding: 0;
-}
-
-.getting-started-demo-embed {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: #f4f6f8;
-}
-
-.getting-started-demo-embed iframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border: 0;
 }
 
 .visual-toolbar {
