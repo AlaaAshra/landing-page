@@ -33,7 +33,6 @@
             </button>
 
             <div class="plans-hero-content">
-              <img class="plans-hero-avatar" :src="selectedAvatar.imageSrc" :alt="agentName" />
               <div class="plans-hero-copy">
                 <h1 id="onboarding-title">Start your free trial now</h1>
                 <p>&mdash; you won't be charged until it ends.</p>
@@ -490,10 +489,6 @@ const clinicPreviewSrc = computed(
   () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}`,
 );
 
-const selectedAvatar = {
-  imageSrc: "/images/onboarding-step-3.png",
-};
-
 const planCards: PlanCard[] = [
   {
     id: "pro",
@@ -801,20 +796,10 @@ onBeforeUnmount(() => {
 .plans-hero-content {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(150px, 210px) minmax(0, 1fr);
+  display: flex;
   align-items: center;
-  gap: 20px;
   min-height: 192px;
-  padding: 10px 34px 0 18px;
-}
-
-.plans-hero-avatar {
-  align-self: end;
-  width: 100%;
-  max-height: 202px;
-  object-fit: contain;
-  object-position: center bottom;
+  padding: 24px 34px;
 }
 
 .plans-hero-copy {
@@ -832,7 +817,7 @@ onBeforeUnmount(() => {
 
 .plans-hero-copy p {
   margin: 10px 0 0;
-  color: #52525b;
+  color: #dc2626;
   font-size: clamp(15px, 1.7vw, 18px);
   font-weight: 500;
   line-height: 1.35;
@@ -1273,16 +1258,14 @@ onBeforeUnmount(() => {
   margin: 12px 12px 0;
   overflow: hidden;
   border-radius: 10px;
-  background-position: 50%;
-  background-size: cover;
 }
 
 .onboarding-hero.is-intro-step {
-  background-image: url("/images/onboarding-step-1.png");
+  background: linear-gradient(135deg, #f9fafb 0%, #edf7f4 45%, #fff7ed 100%);
 }
 
 .onboarding-hero.is-integration-step {
-  background-image: url("/images/onboarding-step-2.png");
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 48%, #f0fdf4 100%);
 }
 
 .onboarding-back {
@@ -1865,8 +1848,6 @@ onBeforeUnmount(() => {
   }
 
   .plans-hero-content {
-    grid-template-columns: minmax(128px, 170px) minmax(0, 1fr);
-    gap: 14px;
     padding-right: 22px;
   }
 }
@@ -1894,14 +1875,8 @@ onBeforeUnmount(() => {
   }
 
   .plans-hero-content {
-    grid-template-columns: 128px minmax(0, 1fr);
     min-height: 176px;
-    gap: 10px;
-    padding: 8px 16px 0 10px;
-  }
-
-  .plans-hero-avatar {
-    max-height: 176px;
+    padding: 22px 16px;
   }
 
   .plans-hero-copy h1 {
