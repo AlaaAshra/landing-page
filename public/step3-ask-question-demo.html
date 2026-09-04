@@ -490,6 +490,10 @@
       shot.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
     }
 
+    function waitUntil(startTime, targetMs) {
+      return wait(Math.max(0, targetMs - (performance.now() - startTime)));
+    }
+
     function typePrompt(value, speed = 46) {
       typedPrompt.classList.add("is-visible");
       typedText.textContent = "";
@@ -530,18 +534,19 @@
     }
 
     async function play() {
+      const startedAt = performance.now();
       resetDemo();
-      await wait(100);
+      await waitUntil(startedAt, 120);
 
       focusImagePoint({ x: 0.865, y: 0.4 }, 1.9);
-      await wait(1480);
+      await waitUntil(startedAt, 860);
 
       focusImagePoint({ x: 0.5, y: 0.5 }, 1);
-      await wait(520);
+      await waitUntil(startedAt, 1280);
 
-      await typePrompt(question, 22);
+      await typePrompt(question, 14);
       activeSend.classList.add("is-visible");
-      await wait(360);
+      await waitUntil(startedAt, 2620);
 
       typedPrompt.classList.remove("is-visible");
       activeSend.classList.remove("is-visible");
@@ -549,24 +554,24 @@
       await wait(80);
 
       sentBubble.classList.add("is-visible");
-      await wait(360);
+      await waitUntil(startedAt, 3120);
 
       sinaResponse.classList.add("is-visible");
-      await wait(280);
+      await wait(180);
 
       for (const line of responseLines) {
         line.classList.add("is-visible");
-        await wait(520);
+        await wait(360);
       }
 
       referencesBlock.classList.add("is-visible");
-      await wait(450);
+      await waitUntil(startedAt, 5000);
 
       conversation.classList.add("is-scrolled");
-      await wait(360);
+      await waitUntil(startedAt, 5600);
 
       referencesBlock.classList.add("is-expanded");
-      await wait(900);
+      await waitUntil(startedAt, 6348);
       notifyDemoComplete();
     }
 

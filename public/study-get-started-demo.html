@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study Mode Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #f4f6f8;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: #f4f6f8;
+    }
+
+    iframe {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #f4f6f8;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="Study mode getting started animation">
+    <iframe id="demo-frame" title="Study mode getting started animation" tabindex="-1"></iframe>
+    <audio id="voiceover" preload="auto" src="/audio/study-get-started-voiceover.mp3"></audio>
+  </main>
+
+  <script>
+    const sceneDurations = {
+      intro: 4676,
+      plan: 6766,
+      sources: 6426,
+      ready: 2194,
+      tools: 8281,
+      answer: 6348,
+    };
+
+    const demos = [
+      { src: "/how-to-get-started-demo.html", step: 0, fallback: sceneDurations.intro + sceneDurations.plan + 400 },
+      { src: "/step2-add-source-demo.html", step: 1, fallback: sceneDurations.sources + sceneDurations.ready + sceneDurations.tools + 400 },
+      { src: "/step3-ask-question-demo.html", step: 2, fallback: sceneDurations.answer + 400 },
+    ];
+
+    const frame = document.getElementById("demo-frame");
+    const voiceover = document.getElementById("voiceover");
+    const search = new URLSearchParams(window.location.search);
+    const playKey = search.get("play") || String(Date.now());
+    const shouldPlayAudio = search.get("audio") === "1";
+    let currentIndex = 0;
+    let fallbackTimer;
+    let audioWasBlocked = false;
+
+    function childSrc(index) {
+      const childUrl = new URL(demos[index].src, window.location.origin);
+      childUrl.searchParams.set("play", `${playKey}-${index}`);
+      return childUrl.pathname + childUrl.search;
+    }
+
+    function clearFallbackTimer() {
+      if (fallbackTimer) {
+        window.clearTimeout(fallbackTimer);
+        fallbackTimer = undefined;
+      }
+    }
+
+    function notifyComplete() {
+      window.parent.postMessage({ type: "study-demo-complete" }, window.location.origin);
+    }
+
+    function startVoiceover() {
+      if (!shouldPlayAudio) {
+        return;
+      }
+
+      voiceover.currentTime = 0;
+      const playPromise = voiceover.play();
+
+      if (playPromise) {
+        playPromise
+          .then(() => {
+            audioWasBlocked = false;
+          })
+          .catch(() => {
+            audioWasBlocked = true;
+          });
+      }
+    }
+
+    function retryVoiceover() {
+      if (!audioWasBlocked || !shouldPlayAudio) {
+        return;
+      }
+
+      void voiceover.play().then(() => {
+        audioWasBlocked = false;
+      }).catch(() => undefined);
+    }
+
+    function showDemo(index) {
+      clearFallbackTimer();
+      currentIndex = index;
+      frame.onload = () => {
+        if (index !== currentIndex) {
+          return;
+        }
+
+        if (index === 0) {
+          startVoiceover();
+        }
+
+        fallbackTimer = window.setTimeout(() => {
+          advanceFrom(index);
+        }, demos[index].fallback);
+      };
+      frame.src = childSrc(index);
+    }
+
+    function advanceFrom(index) {
+      if (index !== currentIndex) {
+        return;
+      }
+
+      if (index >= demos.length - 1) {
+        clearFallbackTimer();
+        notifyComplete();
+        return;
+      }
+
+      showDemo(index + 1);
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
+      const currentDemo = demos[currentIndex];
+      if (event.data?.type !== "plan-demo-complete" || event.data.step !== currentDemo.step) {
+        return;
+      }
+
+      advanceFrom(currentIndex);
+    });
+
+    window.addEventListener("load", () => {
+      showDemo(0);
+    }, { once: true });
+
+    window.addEventListener("pointerdown", retryVoiceover);
+    window.addEventListener("keydown", retryVoiceover);
+
+    window.addEventListener("pagehide", () => {
+      voiceover.pause();
+    });
+  </script>
+</body>
+</html>

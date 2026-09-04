@@ -3,6 +3,7 @@
     <iframe
       :src="src"
       :title="title"
+      allow="autoplay"
       loading="lazy"
       tabindex="-1"
     ></iframe>

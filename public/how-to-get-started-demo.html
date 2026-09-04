@@ -320,6 +320,10 @@
       transform: translateY(-1px);
     }
 
+    .study-card.is-spotlight {
+      animation: studySpotlight 1600ms ease-in-out infinite;
+    }
+
     .anatomy-card {
       color: var(--purple-ink);
       border-color: #e1d7fa;
@@ -654,6 +658,19 @@
       }
     }
 
+    @keyframes studySpotlight {
+      0%,
+      100% {
+        box-shadow: 0 12px 26px rgba(153, 82, 33, 0.12);
+        transform: translateY(0);
+      }
+
+      50% {
+        box-shadow: 0 20px 42px rgba(153, 82, 33, 0.24);
+        transform: translateY(-1px);
+      }
+    }
+
     @keyframes dayBounce {
       0%,
       100% {
@@ -915,6 +932,10 @@
       };
     }
 
+    function waitUntil(startTime, targetMs) {
+      return wait(Math.max(0, targetMs - (performance.now() - startTime)));
+    }
+
     function moveCursor(point, duration = 420) {
       cursor.style.transitionDuration = `${duration}ms`;
       cursor.style.transform = `translate3d(${point.x - 12}px, ${point.y - 12}px, 0)`;
@@ -954,53 +975,59 @@
     }
 
     async function play() {
-      await wait(80);
-      await moveCursor(pointFor(studyCard, 0.72, 0.42), 500);
+      const startedAt = performance.now();
+      studyCard.classList.add("is-spotlight");
+
+      await waitUntil(startedAt, 3300);
+      await moveCursor(pointFor(studyCard, 0.72, 0.42), 520);
 
       studyCard.classList.add("is-hovered");
       const studyPoint = pointFor(studyCard, 0.56, 0.44);
       workspace.style.setProperty("--origin-x", `${studyPoint.x}px`);
       workspace.style.setProperty("--origin-y", `${studyPoint.y}px`);
       workspace.classList.add("is-zoomed");
-      await wait(270);
+      await waitUntil(startedAt, 4250);
 
       cardRipple.style.left = `${studyPoint.x}px`;
       cardRipple.style.top = `${studyPoint.y}px`;
       cardRipple.classList.add("is-active");
       await clickCursor();
-      await wait(40);
+      await waitUntil(startedAt, 4540);
 
+      studyCard.classList.remove("is-spotlight");
       workspace.classList.add("is-fading");
       modalStage.classList.add("is-visible");
-      await wait(270);
+      await waitUntil(startedAt, 5200);
 
-      await moveCursor(pointFor(titleInput, 0.18, 0.5), 260);
+      await moveCursor(pointFor(titleInput, 0.18, 0.5), 320);
       await clickCursor();
-      await typeInto(titleInput, titleText, "Renal revision", 34);
+      await typeInto(titleInput, titleText, "Renal revision", 70);
       titleInput.classList.remove("is-focused");
 
-      await moveCursor(pointFor(dateInput, 0.2, 0.5), 300);
+      await waitUntil(startedAt, 6900);
+      await moveCursor(pointFor(dateInput, 0.2, 0.5), 330);
       await clickCursor();
-      await typeInto(dateInput, dateText, "27 Aug 2026", 30);
+      await typeInto(dateInput, dateText, "27 Aug 2026", 58);
       dateInput.classList.remove("is-focused");
 
+      await waitUntil(startedAt, 8400);
       const mon = document.querySelector('[data-day="mon"]');
       const tue = document.querySelector('[data-day="tue"]');
-      await moveCursor(pointFor(mon), 210);
+      await moveCursor(pointFor(mon), 260);
       await clickCursor();
       selectDay("mon");
-      await wait(80);
-      await moveCursor(pointFor(tue), 180);
+      await wait(180);
+      await moveCursor(pointFor(tue), 240);
       await clickCursor();
       selectDay("tue");
 
-      await wait(80);
-      await moveCursor(pointFor(saveButton, 0.55, 0.5), 280);
+      await waitUntil(startedAt, 9900);
+      await moveCursor(pointFor(saveButton, 0.55, 0.5), 340);
       saveButton.classList.add("is-hovered");
-      await wait(120);
+      await wait(180);
       await clickCursor();
       saveButton.classList.add("is-pressed");
-      await wait(900);
+      await waitUntil(startedAt, 11442);
       notifyDemoComplete();
     }
 

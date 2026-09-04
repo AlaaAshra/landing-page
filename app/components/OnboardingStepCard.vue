@@ -160,7 +160,7 @@
                   v-for="mode in usageModes"
                   :key="mode.id"
                   class="integration-item-shell"
-                  :class="{ 'is-expanded': mode.id === 'clinic' && selectedUsageMode === 'clinic' }"
+                  :class="{ 'is-expanded': (mode.id === 'study' || mode.id === 'clinic') && selectedUsageMode === mode.id }"
                 >
                   <button
                     class="integration-item usage-mode-option"
@@ -168,7 +168,7 @@
                     type="button"
                     role="radio"
                     :aria-checked="selectedUsageMode === mode.id"
-                    :aria-expanded="mode.id === 'clinic' ? selectedUsageMode === 'clinic' : undefined"
+                    :aria-expanded="mode.id === 'study' || mode.id === 'clinic' ? selectedUsageMode === mode.id : undefined"
                     :aria-label="`${mode.name}: ${mode.description}`"
                     @click="selectUsageMode(mode.id)"
                   >
@@ -194,6 +194,37 @@
                       <span></span>
                     </span>
                   </button>
+
+                  <Transition name="clinic-preview">
+                    <div
+                      v-if="mode.id === 'study' && selectedUsageMode === 'study'"
+                      class="clinic-preview-wrap"
+                      role="region"
+                      :aria-label="studyPreviewRegionLabel"
+                    >
+                      <div class="clinic-preview-inner">
+                        <div
+                          class="clinic-preview-open"
+                          role="button"
+                          tabindex="0"
+                          :aria-label="studyPreviewExpandLabel"
+                          @click="toggleStudyPreviewModal"
+                          @keydown.enter.prevent="toggleStudyPreviewModal"
+                          @keydown.space.prevent="toggleStudyPreviewModal"
+                        >
+                          <DemoPreviewFrame
+                            :key="`study-preview-${studyPreviewReplayKey}`"
+                            :src="studyPreviewSrc"
+                            :title="studyPreviewFrameTitle"
+                            variant="inline"
+                          />
+                          <span class="clinic-preview-expand" aria-hidden="true">
+                            <Maximize2 :size="15" :stroke-width="2" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Transition>
 
                   <Transition name="clinic-preview">
                     <div
@@ -286,6 +317,42 @@
       </div>
     </Transition>
   </Teleport>
+
+  <Teleport to="body">
+    <Transition name="clinic-preview-modal">
+      <div
+        v-if="isStudyPreviewModalOpen"
+        class="clinic-preview-modal-backdrop"
+        role="presentation"
+        @click.self="closeStudyPreviewModal"
+      >
+        <div
+          class="clinic-preview-modal"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="studyPreviewModalLabel"
+          @click.stop="toggleStudyPreviewModal"
+        >
+          <button
+            ref="studyPreviewCloseButton"
+            class="clinic-preview-modal-close"
+            type="button"
+            :aria-label="studyPreviewCloseLabel"
+            @click.stop="closeStudyPreviewModal"
+          >
+            <X :size="20" :stroke-width="2" />
+          </button>
+
+          <DemoPreviewFrame
+            :key="`study-preview-modal-${studyPreviewReplayKey}`"
+            :src="studyPreviewModalSrc"
+            :title="studyPreviewFrameTitle"
+            variant="expanded"
+          />
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -332,11 +399,16 @@ const selectedLanguage = ref("en-US");
 const agentName = ref("Sina");
 const selectedUsageMode = useState<UsageModeId>("onboarding-usage-mode", () => "study");
 const selectedPlan = ref<PlanTier | null>(null);
+const studyPreviewReplayKey = ref(0);
 const clinicPreviewReplayKey = ref(0);
+const isStudyPreviewModalOpen = ref(false);
 const isClinicPreviewModalOpen = ref(false);
+const studyPreviewCloseButton = ref<HTMLButtonElement | null>(null);
 const clinicPreviewCloseButton = ref<HTMLButtonElement | null>(null);
+let studyPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let clinicPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let previousBodyOverflow = "";
+let isBodyOverflowLocked = false;
 
 const currentStep = computed<1 | 2 | 3>(() => {
   if (route.query.step === "1") {
@@ -379,6 +451,10 @@ const onboardingTranslations = {
         name: "General Questions",
         description: "Broad medical answers and search.",
       },
+    },
+    studyPreview: {
+      regionLabel: "Study mode getting started preview",
+      frameTitle: "Study mode getting started demo animation",
     },
     clinicPreview: {
       regionLabel: "Clinic mode step 1 preview",
@@ -424,6 +500,10 @@ const onboardingTranslations = {
         name: "أسئلة عامة",
         description: "إجابات طبية عامة وبحث.",
       },
+    },
+    studyPreview: {
+      regionLabel: "Study mode getting started preview",
+      frameTitle: "Study mode getting started demo animation",
     },
     clinicPreview: {
       regionLabel: "معاينة الخطوة الأولى لوضع العيادة",
@@ -478,6 +558,13 @@ const usageModes = computed<UsageModeOption[]>(() => [
     iconClass: "mode-icon-general",
   },
 ]);
+const studyPreviewRegionLabel = computed(() => activeCopy.value.studyPreview.regionLabel);
+const studyPreviewFrameTitle = computed(() => activeCopy.value.studyPreview.frameTitle);
+const studyPreviewExpandLabel = "Expand study preview";
+const studyPreviewModalLabel = "Expanded study preview";
+const studyPreviewCloseLabel = "Close study preview";
+const studyPreviewSrc = computed(() => `/study-get-started-demo.html?play=${studyPreviewReplayKey.value}`);
+const studyPreviewModalSrc = computed(() => `/study-get-started-demo.html?play=${studyPreviewReplayKey.value}&audio=1`);
 const clinicPreviewRegionLabel = computed(() => activeCopy.value.clinicPreview.regionLabel);
 const clinicPreviewSteps = computed<ClinicPreviewStep[]>(() => [...activeCopy.value.clinicPreview.steps]);
 const clinicPreviewFrameTitle = computed(() => activeCopy.value.clinicPreview.frameTitle);
@@ -553,11 +640,23 @@ const selectPlan = (plan: PlanTier) => {
   selectedPlan.value = plan;
 };
 
+const clearStudyPreviewReplayTimer = () => {
+  if (studyPreviewReplayTimer) {
+    window.clearTimeout(studyPreviewReplayTimer);
+    studyPreviewReplayTimer = undefined;
+  }
+};
+
 const clearClinicPreviewReplayTimer = () => {
   if (clinicPreviewReplayTimer) {
     window.clearTimeout(clinicPreviewReplayTimer);
     clinicPreviewReplayTimer = undefined;
   }
+};
+
+const replayStudyPreview = () => {
+  clearStudyPreviewReplayTimer();
+  studyPreviewReplayKey.value += 1;
 };
 
 const replayClinicPreview = () => {
@@ -568,9 +667,26 @@ const replayClinicPreview = () => {
 const selectUsageMode = (mode: UsageModeId) => {
   selectedUsageMode.value = mode;
 
+  if (mode === "study") {
+    openStudyPreviewModal();
+    return;
+  }
+
   if (mode === "clinic") {
     openClinicPreviewModal();
   }
+};
+
+const openStudyPreviewModal = () => {
+  if (selectedUsageMode.value !== "study") {
+    return;
+  }
+
+  replayStudyPreview();
+  isStudyPreviewModalOpen.value = true;
+  void nextTick(() => {
+    studyPreviewCloseButton.value?.focus();
+  });
 };
 
 const openClinicPreviewModal = () => {
@@ -589,6 +705,10 @@ const closeClinicPreviewModal = () => {
   isClinicPreviewModalOpen.value = false;
 };
 
+const closeStudyPreviewModal = () => {
+  isStudyPreviewModalOpen.value = false;
+};
+
 const toggleClinicPreviewModal = () => {
   if (isClinicPreviewModalOpen.value) {
     closeClinicPreviewModal();
@@ -598,39 +718,85 @@ const toggleClinicPreviewModal = () => {
   openClinicPreviewModal();
 };
 
+const toggleStudyPreviewModal = () => {
+  if (isStudyPreviewModalOpen.value) {
+    closeStudyPreviewModal();
+    return;
+  }
+
+  openStudyPreviewModal();
+};
+
 const handleClinicPreviewKeydown = (event: KeyboardEvent) => {
-  if (event.key === "Escape" && isClinicPreviewModalOpen.value) {
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  if (isStudyPreviewModalOpen.value) {
+    closeStudyPreviewModal();
+  }
+
+  if (isClinicPreviewModalOpen.value) {
     closeClinicPreviewModal();
   }
 };
 
 const handleClinicPreviewMessage = (event: MessageEvent) => {
-  if (event.origin !== window.location.origin || event.data?.type !== "clinic-demo-complete") {
+  if (event.origin !== window.location.origin) {
     return;
   }
 
-  if (selectedUsageMode.value !== "clinic") {
-    return;
-  }
-
-  clearClinicPreviewReplayTimer();
-  clinicPreviewReplayTimer = window.setTimeout(() => {
-    if (selectedUsageMode.value === "clinic") {
-      clinicPreviewReplayKey.value += 1;
+  if (event.data?.type === "study-demo-complete") {
+    if (selectedUsageMode.value !== "study") {
+      return;
     }
-  }, 700);
+
+    clearStudyPreviewReplayTimer();
+    studyPreviewReplayTimer = window.setTimeout(() => {
+      if (selectedUsageMode.value === "study") {
+        studyPreviewReplayKey.value += 1;
+      }
+    }, 700);
+  }
+
+  if (event.data?.type === "clinic-demo-complete") {
+    if (selectedUsageMode.value !== "clinic") {
+      return;
+    }
+
+    clearClinicPreviewReplayTimer();
+    clinicPreviewReplayTimer = window.setTimeout(() => {
+      if (selectedUsageMode.value === "clinic") {
+        clinicPreviewReplayKey.value += 1;
+      }
+    }, 700);
+  }
 };
 
 watch(selectedUsageMode, (mode) => {
+  if (mode === "study") {
+    if (!isStudyPreviewModalOpen.value) {
+      replayStudyPreview();
+    }
+
+    closeClinicPreviewModal();
+    clearClinicPreviewReplayTimer();
+    return;
+  }
+
   if (mode === "clinic") {
     if (!isClinicPreviewModalOpen.value) {
       replayClinicPreview();
     }
 
+    closeStudyPreviewModal();
+    clearStudyPreviewReplayTimer();
     return;
   }
 
+  closeStudyPreviewModal();
   closeClinicPreviewModal();
+  clearStudyPreviewReplayTimer();
   clearClinicPreviewReplayTimer();
 });
 
@@ -640,14 +806,19 @@ watch(selectedLanguage, () => {
   }
 });
 
-watch(isClinicPreviewModalOpen, (isOpen) => {
-  if (isOpen) {
-    previousBodyOverflow = document.body.style.overflow;
+watch([isStudyPreviewModalOpen, isClinicPreviewModalOpen], ([isStudyOpen, isClinicOpen]) => {
+  if (isStudyOpen || isClinicOpen) {
+    if (!isBodyOverflowLocked) {
+      previousBodyOverflow = document.body.style.overflow;
+      isBodyOverflowLocked = true;
+    }
+
     document.body.style.overflow = "hidden";
     return;
   }
 
   document.body.style.overflow = previousBodyOverflow;
+  isBodyOverflowLocked = false;
 });
 
 onMounted(() => {
@@ -659,6 +830,7 @@ onBeforeUnmount(() => {
   window.removeEventListener("message", handleClinicPreviewMessage);
   window.removeEventListener("keydown", handleClinicPreviewKeydown);
   document.body.style.overflow = previousBodyOverflow;
+  clearStudyPreviewReplayTimer();
   clearClinicPreviewReplayTimer();
 });
 
@@ -961,6 +1133,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 7px;
+  margin-bottom: 18px;
 }
 
 .plan-feature {

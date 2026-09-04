@@ -466,6 +466,11 @@
       background: #fff0f2;
     }
 
+    .tool-card.is-highlighted {
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      transform: translateY(-2px);
+    }
+
     .modal-layer {
       position: absolute;
       inset: 0;
@@ -1017,6 +1022,10 @@
       };
     }
 
+    function waitUntil(startTime, targetMs) {
+      return wait(Math.max(0, targetMs - (performance.now() - startTime)));
+    }
+
     function moveCursor(point, duration = 360) {
       cursor.style.transitionDuration = `${duration}ms`;
       cursor.style.transform = `translate3d(${point.x - 12}px, ${point.y - 12}px, 0)`;
@@ -1031,38 +1040,57 @@
     }
 
     async function play() {
-      await wait(300);
-      modalScroll.classList.add("is-scrolled");
-      await wait(420);
+      const startedAt = performance.now();
 
-      await moveCursor(pointFor(uploadButton, 0.52, 0.5), 300);
+      await waitUntil(startedAt, 900);
+      modalScroll.classList.add("is-scrolled");
+      await waitUntil(startedAt, 4100);
+
+      await moveCursor(pointFor(uploadButton, 0.52, 0.5), 420);
       await clickCursor();
       uploadButton.classList.add("is-pressed");
-      await wait(130);
+      await wait(160);
       uploadButton.classList.remove("is-pressed");
 
       dropZone.classList.add("is-uploading");
       progressFill.style.setProperty("--progress", "26%");
-      await wait(360);
+      await waitUntil(startedAt, 5900);
 
       progressFill.style.setProperty("--progress", "100%");
       uploadLabel.textContent = "Uploading 100%";
-      await wait(420);
+      await waitUntil(startedAt, 6426);
 
       modalLayer.classList.add("is-hidden");
       workspace.classList.remove("is-blurred");
-      await wait(240);
+      await wait(260);
       workspace.classList.add("is-final");
       workspaceTitle.textContent = "Alaa";
       sourceCount.textContent = "2 SOURCES";
       statsPill.classList.add("is-visible");
-      await wait(80);
+      await wait(180);
       sourceOne.classList.add("is-visible");
-      await wait(150);
+      await wait(260);
       sourceTwo.classList.add("is-visible");
-      await wait(220);
+      await waitUntil(startedAt, 8620);
       toolsPanel.classList.add("is-active");
-      await wait(900);
+
+      const highlightedTools = Array.from(document.querySelectorAll(".tools .tool-card")).filter((tool) => (
+        tool.classList.contains("flash-tool")
+        || tool.classList.contains("quiz-tool")
+        || tool.classList.contains("mind-tool")
+        || tool.classList.contains("anatomy-tool")
+        || tool.classList.contains("notes-tool")
+        || tool.classList.contains("white-tool")
+      ));
+
+      for (const tool of highlightedTools) {
+        tool.classList.add("is-highlighted");
+        await wait(720);
+        tool.classList.remove("is-highlighted");
+        await wait(160);
+      }
+
+      await waitUntil(startedAt, 16901);
       notifyDemoComplete();
     }
 
