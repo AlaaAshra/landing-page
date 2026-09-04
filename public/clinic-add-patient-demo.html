@@ -356,6 +356,15 @@
       text-align: right;
     }
 
+    .fact-row.is-source-highlight {
+      margin-inline: -8px;
+      padding-inline: 8px;
+      border-radius: 10px;
+      background: rgba(27, 209, 131, 0.14);
+      box-shadow: 0 0 0 1px rgba(27, 209, 131, 0.24);
+      animation: sourceFlash 1.35s ease-in-out 2;
+    }
+
     .patient-card-section {
       padding-top: 16px;
       border-top: 1px solid #edf0f4;
@@ -710,11 +719,13 @@
       font-weight: 600;
     }
 
+    .center-panel.is-chart-loading,
     .center-panel.is-chart-ready,
     .center-panel.is-qa {
       padding: 24px 36px;
     }
 
+    .center-panel.is-chart-loading .summary-content,
     .center-panel.is-chart-ready .summary-content {
       display: grid;
       align-content: start;
@@ -724,8 +735,68 @@
       line-height: 1.65;
     }
 
+    .center-panel.is-chart-loading .sina-head,
     .center-panel.is-chart-ready .sina-head {
       display: none;
+    }
+
+    .chart-summary-loading {
+      display: none;
+      width: min(100%, 430px);
+      margin: 34px auto 0;
+      padding: 18px;
+      border: 1px solid #e0f2fe;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 18px 38px -24px rgba(27, 166, 209, 0.28);
+    }
+
+    .center-panel.is-chart-loading .chart-summary-loading {
+      display: grid;
+      gap: 14px;
+      animation: cardEnter 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .chart-summary-loading strong {
+      margin: 0;
+      color: #111827;
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .summary-skeleton {
+      display: grid;
+      gap: 9px;
+    }
+
+    .summary-skeleton span {
+      display: block;
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5eef7;
+      position: relative;
+    }
+
+    .summary-skeleton span::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.64), transparent);
+      animation: progressShimmer 1.35s ease-in-out infinite;
+      transform: translateX(-100%);
+    }
+
+    .summary-skeleton span:nth-child(1) {
+      width: 88%;
+    }
+
+    .summary-skeleton span:nth-child(2) {
+      width: 72%;
+    }
+
+    .summary-skeleton span:nth-child(3) {
+      width: 54%;
     }
 
     .chart-summary-card {
@@ -741,8 +812,10 @@
       animation: cardEnter 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
+    .center-panel.is-chart-loading .summary-empty,
     .center-panel.is-chart-ready .summary-empty,
     .center-panel.is-qa .summary-empty,
+    .center-panel.is-qa .chart-summary-loading,
     .center-panel.is-qa .chart-summary-card {
       display: none;
     }
@@ -809,9 +882,9 @@
     .qa-thread {
       display: none;
       align-content: start;
-      gap: 20px;
+      gap: 12px;
       min-height: 0;
-      padding: 18px 2px 0;
+      padding: 8px 2px 0;
     }
 
     .center-panel.is-qa .summary-content {
@@ -820,8 +893,8 @@
       gap: 0;
       min-height: 0;
       overflow: hidden;
-      font-size: 15px;
-      line-height: 1.65;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .center-panel.is-qa .sina-head {
@@ -836,13 +909,17 @@
     .qa-question {
       justify-self: end;
       max-width: 85%;
-      padding: 10px 16px;
+      padding: 8px 14px;
       border-radius: 24px 24px 4px 24px;
       color: #111827;
       background: #f3f4f6;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 400;
-      line-height: 1.55;
+      line-height: 1.45;
+    }
+
+    .qa-question:empty {
+      display: none;
     }
 
     .qa-loading {
@@ -854,6 +931,10 @@
     }
 
     .qa-thread.is-loading .qa-loading {
+      display: flex;
+    }
+
+    .qa-loading.is-visible {
       display: flex;
     }
 
@@ -899,13 +980,18 @@
       align-items: flex-start;
       gap: 16px;
       color: #111827;
-      font-size: 15px;
-      line-height: 1.65;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
     .qa-thread.is-answered .qa-answer {
       display: flex;
       animation: cardEnter 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .qa-answer.is-visible {
+      display: flex;
+      animation: cardEnter 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     .ai-avatar {
@@ -959,7 +1045,7 @@
     }
 
     .qa-answer p {
-      margin: 0 0 12px;
+      margin: 0 0 8px;
     }
 
     .qa-answer p:last-child {
@@ -976,6 +1062,23 @@
 
     .center-panel.is-qa .chat-input.is-sending {
       box-shadow: inset 0 0 0 2px rgba(37, 199, 165, 0.35);
+    }
+
+    .source-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 20px;
+      margin-left: 6px;
+      padding: 2px 7px;
+      border: 1px solid rgba(27, 166, 209, 0.28);
+      border-radius: 999px;
+      color: #0f7490;
+      background: rgba(224, 242, 254, 0.78);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      vertical-align: middle;
+      animation: sourceChipPop 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     .tools-panel {
@@ -1361,6 +1464,44 @@
       animation: micPulse 1.45s ease-in-out infinite;
     }
 
+    .listening-wave {
+      display: none;
+      align-items: end;
+      justify-content: center;
+      gap: 5px;
+      height: 34px;
+      margin-top: 16px;
+    }
+
+    .recording-panel .listening-wave {
+      display: flex;
+    }
+
+    .listening-wave span {
+      width: 4px;
+      min-height: 8px;
+      border-radius: 999px;
+      background: rgba(225, 29, 72, 0.72);
+      animation: listeningWave 0.92s ease-in-out infinite;
+      transform-origin: bottom;
+    }
+
+    .listening-wave span:nth-child(2) {
+      animation-delay: 0.08s;
+    }
+
+    .listening-wave span:nth-child(3) {
+      animation-delay: 0.16s;
+    }
+
+    .listening-wave span:nth-child(4) {
+      animation-delay: 0.24s;
+    }
+
+    .listening-wave span:nth-child(5) {
+      animation-delay: 0.32s;
+    }
+
     .recording-action.is-pause {
       border-color: #fff2c8;
       color: #b7791f;
@@ -1614,7 +1755,7 @@
     }
 
     .tools-panel.is-finishing .progress-bar span {
-      width: 96%;
+      width: 100%;
     }
 
     .tools-panel.is-finishing .progress-checklist .writing .progress-step-icon {
@@ -1693,6 +1834,11 @@
 
     .doc-tab.is-active {
       color: var(--sky);
+    }
+
+    .doc-tab.is-pressed {
+      color: var(--sky);
+      transform: scale(0.96);
     }
 
     .doc-tab.is-active::after {
@@ -2265,6 +2411,45 @@
       }
     }
 
+    @keyframes listeningWave {
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: scaleY(0.35);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+    }
+
+    @keyframes sourceFlash {
+      0%,
+      100% {
+        background: transparent;
+        box-shadow: 0 0 0 0 rgba(27, 209, 131, 0);
+      }
+
+      35%,
+      70% {
+        background: rgba(27, 209, 131, 0.14);
+        box-shadow: 0 0 0 1px rgba(27, 209, 131, 0.24);
+      }
+    }
+
+    @keyframes sourceChipPop {
+      from {
+        opacity: 0;
+        transform: translateY(4px) scale(0.94);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
     @keyframes newVisitFocusPulse {
       0% {
         opacity: 0.7;
@@ -2331,7 +2516,7 @@
               </div>
               <p data-copy="allPatientsSummary">All patients in your clinic workspace.</p>
             </div>
-            <span class="count-pill" data-copy="patientsCountZero">Patients: 0</span>
+            <span class="count-pill" id="patientsCount" data-copy="patientsCountZero">Patients: 0</span>
           </div>
         </div>
 
@@ -2348,7 +2533,7 @@
           <div class="fact-row"><span data-copy="dob">Date of Birth</span><span>08/14/2003</span></div>
           <div class="fact-row"><span data-copy="age">Age</span><span>23</span></div>
           <div class="fact-row"><span data-copy="room">Room</span><span>16</span></div>
-          <div class="fact-row"><span data-copy="chiefComplaint">Chief Complaint</span><span data-copy="headache">Persistent headache for 3 days</span></div>
+          <div class="fact-row" id="chiefComplaintFact"><span data-copy="chiefComplaint">Chief Complaint</span><span data-copy="headache">Persistent headache for 3 days</span></div>
           <div class="fact-row"><span data-copy="status">Status</span><span data-copy="newIntake">New Intake</span></div>
           <div class="fact-row"><span data-copy="sex">Sex</span><span data-copy="female">Female</span></div>
           <div class="patient-card-section">
@@ -2423,6 +2608,14 @@
             <li data-copy="questions">Questions: Draft intake questions for this patient.</li>
             <li data-copy="media">Media: None on file</li>
           </ul>
+          <div class="chart-summary-loading">
+            <strong data-copy="summarizingPatientHistory">Summarizing patient history...</strong>
+            <div class="summary-skeleton" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
           <article class="chart-summary-card">
             <div class="ai-avatar" aria-hidden="true">
               <svg class="ai-tutor-logo" viewBox="-50 -50 500 500" xmlns="http://www.w3.org/2000/svg">
@@ -2453,7 +2646,7 @@
               </svg>
             </div>
             <div class="ai-message-body">
-              <h3>Patient chart summary for Emily Johnson</h3>
+              <h3 id="chartSummaryTitle">Patient chart summary for Emily Johnson</h3>
               <p>Emily Johnson is a 23-year-old female patient.</p>
               <p>Patient status: New Intake.</p>
               <p>Current concern on file: Persistent headache for 3 days.</p>
@@ -2537,10 +2730,79 @@
                 </svg>
               </div>
               <div class="ai-message-body">
-                <p>The current problem representation is a 23-year-old woman with persistent headache for 3 days and no documented vitals, neurologic exam, headache phenotype, pregnancy status, medication exposure, or red-flag features.</p>
-                <p>Most likely benign possibilities include primary headache disorder such as migraine or tension-type headache, depending on associated photophobia, nausea, disability, neck/shoulder tension, and prior headache history.</p>
-                <p>Must-not-miss differentials include subarachnoid hemorrhage, meningitis/encephalitis, cerebral venous sinus thrombosis, intracranial mass/raised ICP, idiopathic intracranial hypertension, hypertensive emergency, pregnancy-related preeclampsia/eclampsia, and acute angle-closure glaucoma.</p>
-                <p>Key next clarification: onset pattern, "worst headache/thunderclap," fever/neck stiffness, focal neurologic deficits, visual symptoms/papilledema, pregnancy/postpartum/OCP use, BP, trauma, immunosuppression, and prior similar headaches.</p>
+                <p id="qaAnswerOneText"></p>
+                <span class="source-chip" id="qaSourceChip" style="display: none;">Source: Chief Complaint</span>
+              </div>
+            </article>
+            <div class="qa-question" id="qaQuestionTwo"></div>
+            <div class="qa-loading" id="qaLoadingTwo">
+              <div class="ai-avatar" aria-hidden="true">
+                <svg class="ai-tutor-logo" viewBox="-50 -50 500 500" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="aiTutorSphereGradLoadingTwo" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+                      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+                    </linearGradient>
+                    <radialGradient id="aiTutorSphereHighlightLoadingTwo" cx="50%" cy="30%" r="50%" fx="50%" fy="20%">
+                      <stop offset="0%" style="stop-color:white;stop-opacity:0.4" />
+                      <stop offset="100%" style="stop-color:white;stop-opacity:0" />
+                    </radialGradient>
+                    <linearGradient id="aiTutorStarGradLoadingTwo" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#e0f2fe;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="200" cy="200" r="180" fill="url(#aiTutorSphereGradLoadingTwo)" />
+                  <circle cx="200" cy="200" r="180" fill="url(#aiTutorSphereHighlightLoadingTwo)" />
+                  <path
+                    class="ai-tutor-star"
+                    d="M 200 60 Q 210 200 340 200 Q 210 200 200 340 Q 190 200 60 200 Q 190 200 200 60"
+                    fill="url(#aiTutorStarGradLoadingTwo)"
+                    stroke="#99f6ff"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+              <div class="ai-message-body">
+                <strong id="qaLoadingTitleTwo">Analyzing your question...</strong>
+                <span id="qaLoadingBodyTwo">Reviewing chart context and clinical risks...</span>
+                <div class="qa-loading-bar" aria-hidden="true"></div>
+              </div>
+            </div>
+            <article class="qa-answer" id="qaAnswerTwo">
+              <div class="ai-avatar" aria-hidden="true">
+                <svg class="ai-tutor-logo" viewBox="-50 -50 500 500" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="aiTutorSphereGradAnswerTwo" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+                      <stop offset="50%" style="stop-color:#3b82f6;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+                    </linearGradient>
+                    <radialGradient id="aiTutorSphereHighlightAnswerTwo" cx="50%" cy="30%" r="50%" fx="50%" fy="20%">
+                      <stop offset="0%" style="stop-color:white;stop-opacity:0.4" />
+                      <stop offset="100%" style="stop-color:white;stop-opacity:0" />
+                    </radialGradient>
+                    <linearGradient id="aiTutorStarGradAnswerTwo" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#e0f2fe;stop-opacity:1" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="200" cy="200" r="180" fill="url(#aiTutorSphereGradAnswerTwo)" />
+                  <circle cx="200" cy="200" r="180" fill="url(#aiTutorSphereHighlightAnswerTwo)" />
+                  <path
+                    class="ai-tutor-star"
+                    d="M 200 60 Q 210 200 340 200 Q 210 200 200 340 Q 190 200 60 200 Q 190 200 200 60"
+                    fill="url(#aiTutorStarGradAnswerTwo)"
+                    stroke="#99f6ff"
+                    stroke-width="2"
+                  />
+                </svg>
+              </div>
+              <div class="ai-message-body">
+                <p id="qaAnswerTwoLineOne"></p>
+                <p id="qaAnswerTwoLineTwo"></p>
+                <p id="qaAnswerTwoLineThree"></p>
               </div>
             </article>
           </div>
@@ -2680,13 +2942,14 @@
         <div class="tools-view recording-panel">
           <div class="recording-topbar">
             <span class="recording-status"><span class="status-dot" aria-hidden="true"></span><span data-copy="recording">Recording</span></span>
-            <span>0:02 / 30:00</span>
+            <span><span id="recordingTimer">0:00</span> / 30:00</span>
           </div>
           <div class="recording-main">
             <div class="mic-orb" aria-hidden="true">🎙</div>
             <div>
               <h2 data-copy="recordingInProgress">Recording in progress</h2>
               <p data-copy="recordingForEmily">Recording for Emily Johnson. Sina will turn this into your note when you stop.</p>
+              <div class="listening-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
             </div>
           </div>
           <div class="recording-actions">
@@ -2940,6 +3203,13 @@
         <path d="M5 3l13 9-6.2 1.2L9 20 5 3z"></path>
       </svg>
     </span>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-1.mp3"></audio>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-2.mp3"></audio>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-3.mp3"></audio>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-4.mp3"></audio>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-5.mp3"></audio>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-6.mp3"></audio>
+    <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-7.mp3"></audio>
   </main>
 
   <script>
@@ -2966,6 +3236,7 @@
         sex: "Sex",
         female: "Female",
         medicalSummary: "Medical Summary",
+        summarizingPatientHistory: "Summarizing patient history...",
         clinicalQa: "Clinical Q&A",
         howToGetStarted: "How To Get Started",
         howToGetStartedBody: "Choose a patient and ask Sina about the visit, note, plan, or next steps.",
@@ -3088,6 +3359,7 @@
         sex: "الجنس",
         female: "أنثى",
         medicalSummary: "الملخص الطبي",
+        summarizingPatientHistory: "تلخيص تاريخ المريضة...",
         howToGetStarted: "How To Get Started",
         howToGetStartedBody: "Choose a patient and ask Sina about the visit, note, plan, or next steps.",
         noneOnFile: "لا يوجد في الملف",
@@ -3155,6 +3427,8 @@
 
     const params = new URLSearchParams(window.location.search);
     const lang = params.get("lang") === "ar" ? "ar" : "en";
+    const shouldPlayAudio = params.get("audio") === "1";
+    const shouldAutoStart = params.get("manual") !== "1";
     const copy = translations[lang];
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -3167,6 +3441,7 @@
     });
 
     const frame = document.getElementById("frame");
+    const segmentAudios = Array.from(document.querySelectorAll(".segment-audio"));
     const workspace = document.getElementById("workspace");
     const modalStage = document.getElementById("modalStage");
     const cursor = document.getElementById("cursor");
@@ -3175,6 +3450,7 @@
     const toast = document.getElementById("toast");
     const patientEmpty = document.getElementById("patientEmpty");
     const patientCard = document.getElementById("patientCard");
+    const patientsCount = document.getElementById("patientsCount");
     const patientNewVisitButton = document.getElementById("patientNewVisitButton");
     const toolsNewVisitButton = document.getElementById("toolsNewVisitButton");
     const toolsPanel = document.getElementById("toolsPanel");
@@ -3183,43 +3459,119 @@
     const avsTab = document.getElementById("avsTab");
     const centerPanel = document.getElementById("centerPanel");
     const centerTitle = document.getElementById("centerTitle");
+    const chartSummaryTitle = document.getElementById("chartSummaryTitle");
+    const summaryDetailNodes = Array.from(document.querySelectorAll(".chart-summary-card .ai-message-body > :not(h3)"));
     const chatInput = document.getElementById("chatInput");
     const chatInputText = document.getElementById("chatInputText");
     const qaThread = document.getElementById("qaThread");
     const qaQuestion = document.getElementById("qaQuestion");
+    const qaQuestionTwo = document.getElementById("qaQuestionTwo");
     const qaLoading = document.getElementById("qaLoading");
+    const qaLoadingTwo = document.getElementById("qaLoadingTwo");
     const qaLoadingTitle = document.getElementById("qaLoadingTitle");
     const qaLoadingBody = document.getElementById("qaLoadingBody");
+    const qaLoadingTitleTwo = document.getElementById("qaLoadingTitleTwo");
+    const qaLoadingBodyTwo = document.getElementById("qaLoadingBodyTwo");
     const qaAnswer = document.getElementById("qaAnswer");
+    const qaAnswerTwo = document.getElementById("qaAnswerTwo");
+    const qaAnswerOneText = document.getElementById("qaAnswerOneText");
+    const qaAnswerTwoLineOne = document.getElementById("qaAnswerTwoLineOne");
+    const qaAnswerTwoLineTwo = document.getElementById("qaAnswerTwoLineTwo");
+    const qaAnswerTwoLineThree = document.getElementById("qaAnswerTwoLineThree");
+    const qaSourceChip = document.getElementById("qaSourceChip");
+    const chiefComplaintFact = document.getElementById("chiefComplaintFact");
     const progressPercent = document.getElementById("progressPercent");
+    const progressFill = document.querySelector(".progress-bar span");
+    const progressSteps = Array.from(document.querySelectorAll(".progress-checklist:not(.progress-checklist-legacy) > div"));
+    const recordingTimer = document.getElementById("recordingTimer");
     const visitToast = document.getElementById("visitToast");
     const transcriptionToast = document.getElementById("transcriptionToast");
     const noteToast = document.getElementById("noteToast");
 
-    const clinicDemoSteps = [
-      { id: "add-patient" },
-      { id: "start-visit" },
-      { id: "generate-note" },
+    const fallbackSegmentDurations = [3709, 3474, 3553, 4284, 4441, 4598, 6426];
+    const chartSummaryTitleText = "Patient chart summary for Emily Johnson";
+    const firstQuestionText = "What is the chief complaint?";
+    const firstAnswerText = "Emily Johnson's chief complaint is persistent headache for 3 days.";
+    const secondQuestionText = "Based on the patient's history, what is the most likely diagnosis and what are the differential diagnoses?";
+    const secondAnswerLines = [
+      "Problem representation: 23-year-old female with persistent headache for 3 days and no documented vitals, neurologic exam, pregnancy status, or red-flag features.",
+      "Most likely diagnoses: primary headache disorder such as migraine or tension-type headache, depending on photophobia, nausea, disability, tension pattern, and prior history.",
+      "Must-not-miss differentials: SAH, meningitis/encephalitis, CVST, mass/raised ICP, IIH, hypertensive emergency, preeclampsia/eclampsia, and acute angle-closure glaucoma.",
     ];
-
-    const qaQuestionText = "Based on the patient's history, what is the most likely diagnosis and what are the differential diagnoses?";
     const qaLoadingStates = [
       {
-        title: "Processing your request..",
+        title: "Processing your request...",
         body: "Initiating secure connection and processing parameters…",
       },
       {
-        title: "Analyzing your question..",
+        title: "Analyzing your question...",
         body: "Extracting key clinical symptoms, findings, and context…",
       },
       {
-        title: "Preparing response..",
+        title: "Preparing response...",
         body: "Synthesizing findings into a comprehensive medical explanation…",
       },
     ];
+    qaLoadingStates[0].body = "Reading the patient's chart context...";
+    qaLoadingStates[1].body = "Matching the answer to chart evidence...";
+    qaLoadingStates[2].body = "Grounding the response in patient details...";
 
     const wait = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
     let demoScale = 1;
+    let currentRunId = 0;
+    let activeFallbackTimer;
+    let pendingAudioIndex = null;
+    let audioWasBlocked = false;
+    let recordingInterval;
+
+    function waitUntil(startTime, targetMs) {
+      return wait(Math.max(0, targetMs - (performance.now() - startTime)));
+    }
+
+    function isActive(runId) {
+      return runId === currentRunId;
+    }
+
+    function notifyDemoComplete() {
+      window.parent.postMessage({ type: "clinic-demo-complete" }, window.location.origin);
+    }
+
+    function completeDemo() {
+      notifyDemoComplete();
+
+      if (window.parent === window) {
+        window.setTimeout(() => {
+          void play();
+        }, 900);
+      }
+    }
+
+    function updateProgress(value) {
+      progressPercent.textContent = `${value}%`;
+      progressFill?.style.setProperty("--progress", `${value}%`);
+    }
+
+    function setProgressStep(activeIndex) {
+      progressSteps.forEach((step, index) => {
+        const writingClass = index === 2 ? " writing" : "";
+        const icon = step.querySelector(".progress-step-icon");
+
+        if (index < activeIndex) {
+          step.className = `done${writingClass}`;
+          icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></svg>';
+          return;
+        }
+
+        if (index === activeIndex) {
+          step.className = `active${writingClass}`;
+          icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" opacity="0.25"></circle><path fill="currentColor" opacity="0.75" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+          return;
+        }
+
+        step.className = "pending";
+        icon.textContent = String(index + 1);
+      });
+    }
 
     function resizeDemo() {
       demoScale = Math.min(window.innerWidth / 1240, window.innerHeight / 720);
@@ -3241,11 +3593,11 @@
       return wait(duration);
     }
 
-    function clickCursor() {
+    function clickCursor(duration = 160) {
       cursor.classList.remove("is-clicking");
       void cursor.offsetWidth;
       cursor.classList.add("is-clicking");
-      return wait(160);
+      return wait(duration);
     }
 
     function typeInto(fieldEl, textEl, value, speed = 28) {
@@ -3284,6 +3636,48 @@
       });
     }
 
+    function typeTextFor(textEl, value, duration) {
+      textEl.textContent = "";
+      return new Promise((resolve) => {
+        if (!value) {
+          resolve();
+          return;
+        }
+
+        const startedAt = performance.now();
+        const tick = () => {
+          const progress = Math.min(1, (performance.now() - startedAt) / Math.max(duration, 1));
+          const index = Math.max(1, Math.round(value.length * progress));
+          textEl.textContent = value.slice(0, index);
+
+          if (progress < 1) {
+            window.requestAnimationFrame(tick);
+            return;
+          }
+
+          textEl.textContent = value;
+          resolve();
+        };
+
+        tick();
+      });
+    }
+
+    async function fillFieldFor(fieldId, valueId, value, duration, runId, xRatio = 0.2) {
+      const field = document.getElementById(fieldId);
+      const text = document.getElementById(valueId);
+      const moveDuration = Math.min(38, duration * 0.16);
+      await moveCursor(pointFor(field, xRatio, 0.52), moveDuration);
+      if (!isActive(runId)) return;
+      await clickCursor(42);
+      if (!isActive(runId)) return;
+      field.classList.add("is-focused");
+      text.classList.remove("placeholder");
+      await typeTextFor(text, value, Math.max(40, duration - moveDuration - 62));
+      field.classList.remove("is-focused");
+      await wait(20);
+    }
+
     async function fillField(fieldId, valueId, value, xRatio = 0.2, speed = 26) {
       const field = document.getElementById(fieldId);
       const text = document.getElementById(valueId);
@@ -3300,7 +3694,65 @@
       text.classList.add("placeholder");
     }
 
+    function stopRecordingTimer() {
+      if (recordingInterval) {
+        window.clearInterval(recordingInterval);
+        recordingInterval = undefined;
+      }
+    }
+
+    function startRecordingTimer(runId) {
+      stopRecordingTimer();
+      const startedAt = performance.now();
+      const updateTimer = () => {
+        if (!isActive(runId)) {
+          stopRecordingTimer();
+          return;
+        }
+
+        const seconds = Math.floor((performance.now() - startedAt) / 1000);
+        recordingTimer.textContent = `0:${String(seconds).padStart(2, "0")}`;
+      };
+
+      updateTimer();
+      recordingInterval = window.setInterval(updateTimer, 250);
+    }
+
+    function showWorkspaceState() {
+      cursor.style.opacity = "";
+    }
+
+    function setPatientCreatedState() {
+      patientEmpty.style.display = "none";
+      patientCard.classList.add("is-visible");
+      patientsCount.textContent = "Patients: 1";
+    }
+
+    function setChartReadyState() {
+      centerPanel.classList.remove("is-chart-loading");
+      centerPanel.classList.add("is-chart-ready");
+    }
+
+    function resetQa() {
+      qaThread.classList.remove("is-loading", "is-answered");
+      qaQuestion.textContent = "";
+      qaQuestionTwo.textContent = "";
+      qaLoading.classList.remove("is-visible");
+      qaLoadingTwo.classList.remove("is-visible");
+      qaAnswer.classList.remove("is-visible");
+      qaAnswerTwo.classList.remove("is-visible");
+      qaAnswer.style.display = "";
+      qaLoading.style.display = "";
+      qaAnswerOneText.textContent = "";
+      qaAnswerTwoLineOne.textContent = "";
+      qaAnswerTwoLineTwo.textContent = "";
+      qaAnswerTwoLineThree.textContent = "";
+      qaSourceChip.style.display = "none";
+      chiefComplaintFact.classList.remove("is-source-highlight");
+    }
+
     function resetDemo() {
+      stopRecordingTimer();
       workspace.classList.remove("is-blurred");
       modalStage.classList.remove("is-visible");
       toast.classList.remove("is-visible");
@@ -3309,6 +3761,7 @@
       noteToast.classList.remove("is-visible");
       patientCard.classList.remove("is-visible");
       patientEmpty.style.display = "grid";
+      patientsCount.textContent = copy.patientsCountZero || "Patients: 0";
       newPatientButton.classList.remove("is-hovered", "is-zoomed");
       patientNewVisitButton.classList.remove("is-hovered", "is-zoomed");
       toolsNewVisitButton.classList.remove("is-hovered", "is-zoomed");
@@ -3316,161 +3769,364 @@
       completeNoteButton.classList.remove("is-pressed");
       avsTab.classList.remove("is-pressed");
       toolsPanel.classList.remove("is-visit-workspace", "is-preparing", "is-recording", "is-processing", "is-finishing", "is-note", "is-note-scroll", "is-avs");
-      centerPanel.classList.remove("is-chart-ready", "is-qa");
+      centerPanel.classList.remove("is-chart-loading", "is-chart-ready", "is-qa");
       centerTitle.textContent = copy.howToGetStarted;
+      chartSummaryTitle.textContent = chartSummaryTitleText;
+      summaryDetailNodes.forEach((node) => {
+        node.style.opacity = "";
+        node.style.transition = "";
+      });
       chatInput.classList.remove("is-sending");
       chatInputText.classList.remove("is-typing");
       chatInputText.textContent = copy.askClinical;
-      qaThread.classList.remove("is-loading", "is-answered");
-      qaQuestion.textContent = "";
-      qaAnswer.style.display = "";
-      qaLoading.style.display = "";
+      resetQa();
       qaLoadingTitle.textContent = qaLoadingStates[0].title;
       qaLoadingBody.textContent = qaLoadingStates[0].body;
-      progressPercent.textContent = "72%";
+      qaLoadingTitleTwo.textContent = qaLoadingStates[1].title;
+      qaLoadingBodyTwo.textContent = "Reviewing chart context and clinical risks...";
+      updateProgress(0);
+      setProgressStep(0);
+      recordingTimer.textContent = "0:00";
       document.querySelectorAll(".field.is-focused").forEach((field) => field.classList.remove("is-focused"));
       resetField("firstValue");
       resetField("lastValue");
-      resetField("mrnValue", copy.mrn);
+      resetField("mrnValue", "Paste intake details");
       resetField("dobValue");
       resetField("ageValue");
       resetField("roomValue");
       resetField("complaintValue");
       resetField("sexValue", copy.selectSex);
       resetField("phoneValue", "(555) 000-0000");
+
+      cursor.style.opacity = "";
     }
 
-    async function play() {
-      resetDemo();
-      await wait(180);
-      await moveCursor(pointFor(newPatientButton, 0.68, 0.5), 760);
-      newPatientButton.classList.add("is-hovered", "is-zoomed");
-      await wait(760);
-      await clickCursor();
-      newPatientButton.classList.remove("is-hovered", "is-zoomed");
+    async function segmentIntro(_duration, runId) {
+      if (!isActive(runId)) return;
+      showWorkspaceState();
+      cursor.style.opacity = "0";
+    }
 
+    async function segmentAddPatient(duration, runId) {
+      if (!isActive(runId)) return;
+      showWorkspaceState();
+      const startedAt = performance.now();
+      await moveCursor(pointFor(newPatientButton, 0.68, 0.5), 180);
+      if (!isActive(runId)) return;
+      newPatientButton.classList.add("is-hovered", "is-zoomed");
+      await clickCursor(70);
+      newPatientButton.classList.remove("is-hovered", "is-zoomed");
       workspace.classList.add("is-blurred");
       modalStage.classList.add("is-visible");
-      await wait(260);
+      await waitUntil(startedAt, 520);
 
-      await fillField("firstField", "firstValue", "Emily", 0.2, 18);
-      await fillField("lastField", "lastValue", "Johnson", 0.2, 18);
-      await fillField("mrnField", "mrnValue", "patient-1788378497751", 0.18, 9);
-      await fillField("dobField", "dobValue", "08/14/2003", 0.18, 13);
-      await fillField("ageField", "ageValue", "23", 0.18, 18);
-      await fillField("roomField", "roomValue", "16", 0.18, 18);
+      const fields = [
+        ["firstField", "firstValue", "Emily", 220, 0.2],
+        ["lastField", "lastValue", "Johnson", 240, 0.2],
+        ["mrnField", "mrnValue", "Headache x3 days; insurance changed.", 560, 0.2],
+        ["dobField", "dobValue", "08/14/2003", 340, 0.18],
+        ["ageField", "ageValue", "23", 150, 0.18],
+        ["roomField", "roomValue", "16", 150, 0.18],
+        ["complaintField", "complaintValue", copy.headache, 520, 0.34],
+        ["sexField", "sexValue", copy.female, 240, 0.16],
+      ];
 
-      await fillField("complaintField", "complaintValue", copy.headache, 0.34, 9);
-      await fillField("sexField", "sexValue", copy.female, 0.16, 14);
-      await fillField("phoneField", "phoneValue", "(555) 013-2750", 0.2, 12);
+      for (const [fieldId, valueId, value, fieldDuration, xRatio] of fields) {
+        if (!isActive(runId)) return;
+        await fillFieldFor(fieldId, valueId, value, fieldDuration, runId, xRatio);
+      }
 
-      await moveCursor(pointFor(createPatient, 0.56, 0.52), 240);
-      await clickCursor();
+      await waitUntil(startedAt, duration - 60);
+    }
+
+    async function segmentCreateSummary(duration, runId) {
+      if (!isActive(runId)) return;
+      const startedAt = performance.now();
+      await moveCursor(pointFor(createPatient, 0.56, 0.52), 120);
+      if (!isActive(runId)) return;
+      await clickCursor(70);
       createPatient.classList.add("is-pressed");
-      await wait(160);
+      await wait(80);
       createPatient.classList.remove("is-pressed");
 
       modalStage.classList.remove("is-visible");
       workspace.classList.remove("is-blurred");
       toast.classList.add("is-visible");
-      patientEmpty.style.display = "none";
-      patientCard.classList.add("is-visible");
-      centerPanel.classList.add("is-chart-ready");
-      await moveCursor(pointFor(patientCard, 0.82, 0.18), 680);
-      await wait(860);
+      setPatientCreatedState();
+      centerPanel.classList.add("is-chart-loading");
+      chartSummaryTitle.textContent = "";
+      summaryDetailNodes.forEach((node) => {
+        node.style.opacity = "0";
+        node.style.transition = "opacity 360ms ease";
+      });
+
+      await waitUntil(startedAt, 780);
+      if (!isActive(runId)) return;
+      setChartReadyState();
+      await typeTextFor(chartSummaryTitle, chartSummaryTitleText, 980);
+      summaryDetailNodes.forEach((node) => {
+        node.style.opacity = "1";
+      });
+
+      await waitUntil(startedAt, duration - 80);
+    }
+
+    async function segmentStartVisit(duration, runId) {
+      if (!isActive(runId)) return;
+      const startedAt = performance.now();
       toast.classList.remove("is-visible");
-
-      await moveCursor(pointFor(toolsNewVisitButton, 0.5, 0.52), 760);
-      toolsNewVisitButton.classList.add("is-hovered", "is-zoomed");
-      await wait(850);
-      await clickCursor();
-      toolsNewVisitButton.classList.remove("is-hovered", "is-zoomed");
+      setPatientCreatedState();
+      setChartReadyState();
+      toolsPanel.classList.remove("is-preparing", "is-recording", "is-processing", "is-finishing", "is-note", "is-note-scroll", "is-avs");
       toolsPanel.classList.add("is-visit-workspace");
-      await wait(1050);
 
-      await moveCursor(pointFor(transcribeButton, 0.52, 0.5), 700);
+      await waitUntil(startedAt, 680);
+      if (!isActive(runId)) return;
+      await moveCursor(pointFor(transcribeButton, 0.52, 0.5), 260);
       transcribeButton.classList.add("is-zoomed");
-      await wait(820);
-      await clickCursor();
+      await clickCursor(75);
       transcribeButton.classList.remove("is-zoomed");
       transcribeButton.classList.add("is-pressed");
-      await wait(180);
+      await wait(80);
       transcribeButton.classList.remove("is-pressed");
       toolsPanel.classList.remove("is-visit-workspace");
       toolsPanel.classList.add("is-preparing");
-      await wait(1200);
 
+      await waitUntil(startedAt, 1850);
+      if (!isActive(runId)) return;
       visitToast.classList.add("is-visible");
       toolsPanel.classList.remove("is-preparing");
       toolsPanel.classList.add("is-recording");
-      await wait(2400);
+      startRecordingTimer(runId);
 
-      await moveCursor(pointFor(completeNoteButton, 0.52, 0.5), 560);
-      await clickCursor();
+      await waitUntil(startedAt, duration - 80);
+    }
+
+    async function segmentGenerateNote(duration, runId) {
+      if (!isActive(runId)) return;
+      const startedAt = performance.now();
+      toolsPanel.classList.remove("is-preparing", "is-visit-workspace");
+      toolsPanel.classList.add("is-recording");
+      await moveCursor(pointFor(completeNoteButton, 0.52, 0.5), 160);
+      if (!isActive(runId)) return;
+      await clickCursor(70);
       completeNoteButton.classList.add("is-pressed");
-      await wait(180);
+      await wait(80);
       completeNoteButton.classList.remove("is-pressed");
+      stopRecordingTimer();
       visitToast.classList.remove("is-visible");
       transcriptionToast.classList.add("is-visible");
-      centerPanel.classList.add("is-chart-ready");
       toolsPanel.classList.remove("is-recording");
       toolsPanel.classList.add("is-processing");
-      await wait(1400);
-      toolsPanel.classList.add("is-finishing");
-      progressPercent.textContent = "96%";
-      await wait(1150);
+      updateProgress(18);
+      setProgressStep(0);
 
+      await waitUntil(startedAt, 980);
+      if (!isActive(runId)) return;
+      updateProgress(34);
+      setProgressStep(1);
+
+      await waitUntil(startedAt, 1700);
+      if (!isActive(runId)) return;
+      updateProgress(58);
+      setProgressStep(2);
+
+      await waitUntil(startedAt, 2600);
+      if (!isActive(runId)) return;
+      updateProgress(82);
+      setProgressStep(3);
+
+      await waitUntil(startedAt, 3400);
+      if (!isActive(runId)) return;
+      toolsPanel.classList.add("is-finishing");
+      updateProgress(100);
+      setProgressStep(4);
+
+      await waitUntil(startedAt, 3720);
+      if (!isActive(runId)) return;
       transcriptionToast.classList.remove("is-visible");
-      noteToast.classList.add("is-visible");
+      noteToast.classList.remove("is-visible");
       toolsPanel.classList.remove("is-processing", "is-finishing");
       toolsPanel.classList.add("is-note");
-      await wait(1350);
-      toolsPanel.classList.add("is-note-scroll");
-      await wait(1650);
 
-      await moveCursor(pointFor(avsTab, 0.5, 0.52), 580);
-      await clickCursor();
-      avsTab.classList.add("is-pressed");
-      await wait(180);
-      avsTab.classList.remove("is-pressed");
-      toolsPanel.classList.remove("is-note", "is-note-scroll");
-      toolsPanel.classList.add("is-avs");
-      await wait(1650);
+      await waitUntil(startedAt, duration - 80);
+    }
 
+    async function segmentAfterVisitSummary(duration, runId) {
+      if (!isActive(runId)) return;
+      const startedAt = performance.now();
       noteToast.classList.remove("is-visible");
+      setPatientCreatedState();
+      setChartReadyState();
+      centerPanel.classList.remove("is-qa");
+      toolsPanel.classList.remove("is-preparing", "is-visit-workspace", "is-recording", "is-processing", "is-finishing", "is-note-scroll", "is-avs");
+      toolsPanel.classList.add("is-note");
+      cursor.style.opacity = "0";
+
+      await waitUntil(startedAt, 760);
+      if (!isActive(runId)) return;
+      cursor.style.opacity = "";
+      await moveCursor(pointFor(avsTab, 0.52, 0.5), 220);
+      if (!isActive(runId)) return;
+      await clickCursor(70);
+      avsTab.classList.add("is-pressed");
+      await wait(90);
+      avsTab.classList.remove("is-pressed");
+      toolsPanel.classList.remove("is-note");
+      toolsPanel.classList.add("is-avs");
+
+      await waitUntil(startedAt, duration - 80);
+    }
+
+    async function segmentClinicalQuestion(duration, runId) {
+      if (!isActive(runId)) return;
+      const startedAt = performance.now();
       centerTitle.textContent = copy.clinicalQa || "Clinical Q&A";
-      centerPanel.classList.remove("is-chart-ready");
+      centerPanel.classList.remove("is-chart-ready", "is-chart-loading");
       centerPanel.classList.add("is-qa");
-      await moveCursor(pointFor(chatInput, 0.4, 0.5), 620);
-      await clickCursor();
+      resetQa();
+
+      chiefComplaintFact.classList.remove("is-source-highlight");
+      await waitUntil(startedAt, 260);
+      if (!isActive(runId)) return;
+      await moveCursor(pointFor(chatInput, 0.42, 0.5), 160);
+      if (!isActive(runId)) return;
+      await clickCursor(60);
       chatInput.classList.add("is-sending");
       chatInputText.classList.add("is-typing");
-      await typeText(chatInputText, qaQuestionText, 12);
-      await wait(220);
-      qaQuestion.textContent = qaQuestionText;
-      qaThread.classList.add("is-loading");
+      await typeTextFor(chatInputText, secondQuestionText, 940);
+      qaQuestionTwo.textContent = secondQuestionText;
+      qaLoadingTwo.classList.add("is-visible");
       chatInput.classList.remove("is-sending");
       chatInputText.classList.remove("is-typing");
       chatInputText.textContent = copy.askClinical;
 
-      for (const state of qaLoadingStates) {
-        qaLoadingTitle.textContent = state.title;
-        qaLoadingBody.textContent = state.body;
-        await wait(980);
+      qaLoadingTitleTwo.textContent = "Analyzing your question...";
+      qaLoadingBodyTwo.textContent = "Reviewing history, risks, and differential diagnoses...";
+      await waitUntil(startedAt, 2050);
+      if (!isActive(runId)) return;
+      qaLoadingTwo.classList.remove("is-visible");
+      qaAnswerTwo.classList.add("is-visible");
+      await typeTextFor(qaAnswerTwoLineOne, secondAnswerLines[0], 760);
+      if (!isActive(runId)) return;
+      await typeTextFor(qaAnswerTwoLineTwo, secondAnswerLines[1], 800);
+      if (!isActive(runId)) return;
+      await typeTextFor(qaAnswerTwoLineThree, secondAnswerLines[2], 1050);
+
+      await waitUntil(startedAt, duration - 80);
+    }
+
+    const segmentHandlers = [
+      segmentIntro,
+      segmentAddPatient,
+      segmentCreateSummary,
+      segmentStartVisit,
+      segmentGenerateNote,
+      segmentAfterVisitSummary,
+      segmentClinicalQuestion,
+    ];
+
+    function segmentDuration(index) {
+      const audioDuration = segmentAudios[index]?.duration;
+      return Number.isFinite(audioDuration) && audioDuration > 0
+        ? audioDuration * 1000
+        : fallbackSegmentDurations[index];
+    }
+
+    function stopAllAudio() {
+      segmentAudios.forEach((audio) => {
+        audio.pause();
+        audio.currentTime = 0;
+      });
+    }
+
+    function runSegment(index, runId) {
+      if (!isActive(runId)) return;
+      window.clearTimeout(activeFallbackTimer);
+
+      if (index >= segmentHandlers.length) {
+        completeDemo();
+        return;
       }
 
-      qaThread.classList.remove("is-loading");
-      qaThread.classList.add("is-answered");
-      await wait(4400);
-      await wait(900);
-      void play();
+      const audio = segmentAudios[index];
+      const duration = segmentDuration(index);
+      const startVisuals = () => {
+        if (!isActive(runId)) return;
+        pendingAudioIndex = null;
+        audioWasBlocked = false;
+        void segmentHandlers[index](duration, runId);
+      };
+
+      if (shouldPlayAudio && audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        const handleEnded = () => {
+          if (isActive(runId)) {
+            runSegment(index + 1, runId);
+          }
+        };
+        audio.addEventListener("ended", handleEnded, { once: true });
+        const playPromise = audio.play();
+
+        if (playPromise) {
+          playPromise.then(startVisuals).catch(() => {
+            audio.removeEventListener("ended", handleEnded);
+            audioWasBlocked = true;
+            pendingAudioIndex = index;
+          });
+          return;
+        }
+
+        startVisuals();
+        return;
+      }
+
+      startVisuals();
+      activeFallbackTimer = window.setTimeout(() => {
+        runSegment(index + 1, runId);
+      }, duration);
+    }
+
+    function retryVoiceover() {
+      if (!audioWasBlocked || !shouldPlayAudio || pendingAudioIndex === null) {
+        return;
+      }
+
+      runSegment(pendingAudioIndex, currentRunId);
+    }
+
+    async function play() {
+      currentRunId += 1;
+      const runId = currentRunId;
+      window.clearTimeout(activeFallbackTimer);
+      stopAllAudio();
+      resetDemo();
+      runSegment(0, runId);
     }
 
     window.addEventListener("resize", resizeDemo);
     window.addEventListener("load", () => {
       resizeDemo();
-      play();
+      if (shouldAutoStart) {
+        play();
+        return;
+      }
+
+      resetDemo();
     }, { once: true });
+    window.startClinicDemo = () => {
+      resizeDemo();
+      return play();
+    };
+    window.addEventListener("pointerdown", retryVoiceover);
+    window.addEventListener("keydown", retryVoiceover);
+    window.addEventListener("pagehide", () => {
+      currentRunId += 1;
+      window.clearTimeout(activeFallbackTimer);
+      stopRecordingTimer();
+      stopAllAudio();
+    });
   </script>
 </body>
 </html>

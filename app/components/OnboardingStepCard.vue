@@ -309,7 +309,7 @@
 
           <DemoPreviewFrame
             :key="`clinic-preview-modal-${clinicPreviewReplayKey}-${selectedLanguage}`"
-            :src="clinicPreviewSrc"
+            :src="clinicPreviewModalSrc"
             :title="clinicPreviewFrameTitle"
             variant="expanded"
           />
@@ -574,6 +574,9 @@ const clinicPreviewCloseLabel = "Close clinic preview";
 const clinicPreviewLanguage = computed(() => (selectedLanguage.value === "ar" ? "ar" : "en"));
 const clinicPreviewSrc = computed(
   () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}`,
+);
+const clinicPreviewModalSrc = computed(
+  () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}&audio=1`,
 );
 
 const planCards: PlanCard[] = [
