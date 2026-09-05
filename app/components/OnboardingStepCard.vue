@@ -295,7 +295,6 @@
           role="dialog"
           aria-modal="true"
           :aria-label="clinicPreviewModalLabel"
-          @click.stop="toggleClinicPreviewModal"
         >
           <button
             ref="clinicPreviewCloseButton"
@@ -331,7 +330,6 @@
           role="dialog"
           aria-modal="true"
           :aria-label="studyPreviewModalLabel"
-          @click.stop="toggleStudyPreviewModal"
         >
           <button
             ref="studyPreviewCloseButton"
@@ -409,6 +407,8 @@ let studyPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let clinicPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let previousBodyOverflow = "";
 let isBodyOverflowLocked = false;
+let activePreviewAudio: HTMLAudioElement | undefined;
+let activePreviewAudioRunId = 0;
 
 const currentStep = computed<1 | 2 | 3>(() => {
   if (route.query.step === "1") {
@@ -564,7 +564,7 @@ const studyPreviewExpandLabel = "Expand study preview";
 const studyPreviewModalLabel = "Expanded study preview";
 const studyPreviewCloseLabel = "Close study preview";
 const studyPreviewSrc = computed(() => `/study-get-started-demo.html?play=${studyPreviewReplayKey.value}`);
-const studyPreviewModalSrc = computed(() => `/study-get-started-demo.html?play=${studyPreviewReplayKey.value}&audio=1`);
+const studyPreviewModalSrc = computed(() => `/study-get-started-demo.html?play=${studyPreviewReplayKey.value}`);
 const clinicPreviewRegionLabel = computed(() => activeCopy.value.clinicPreview.regionLabel);
 const clinicPreviewSteps = computed<ClinicPreviewStep[]>(() => [...activeCopy.value.clinicPreview.steps]);
 const clinicPreviewFrameTitle = computed(() => activeCopy.value.clinicPreview.frameTitle);
@@ -576,8 +576,19 @@ const clinicPreviewSrc = computed(
   () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}`,
 );
 const clinicPreviewModalSrc = computed(
-  () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}&audio=1`,
+  () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}`,
 );
+
+const studyVoiceoverSrc = "/audio/study-get-started-voiceover.mp3";
+const clinicVoiceoverSources = [
+  "/audio/clinic-onboarding-1.mp3",
+  "/audio/clinic-onboarding-2.mp3",
+  "/audio/clinic-onboarding-3.mp3",
+  "/audio/clinic-onboarding-4.mp3",
+  "/audio/clinic-onboarding-5.mp3",
+  "/audio/clinic-onboarding-6.mp3",
+  "/audio/clinic-onboarding-7.mp3",
+];
 
 const planCards: PlanCard[] = [
   {
@@ -643,6 +654,58 @@ const selectPlan = (plan: PlanTier) => {
   selectedPlan.value = plan;
 };
 
+const stopPreviewAudio = () => {
+  activePreviewAudioRunId += 1;
+
+  if (!activePreviewAudio) {
+    return;
+  }
+
+  activePreviewAudio.pause();
+  activePreviewAudio.currentTime = 0;
+  activePreviewAudio.remove();
+  activePreviewAudio = undefined;
+};
+
+const playPreviewAudio = (sources: string[]) => {
+  stopPreviewAudio();
+  const runId = activePreviewAudioRunId;
+
+  const playSource = (index: number) => {
+    if (runId !== activePreviewAudioRunId || index >= sources.length) {
+      return;
+    }
+
+    const audio = new Audio(sources[index]);
+    activePreviewAudio = audio;
+    audio.dataset.previewAudio = "true";
+    audio.style.display = "none";
+    audio.preload = "auto";
+    document.body.appendChild(audio);
+    audio.addEventListener(
+      "ended",
+      () => {
+        if (runId === activePreviewAudioRunId) {
+          playSource(index + 1);
+        }
+      },
+      { once: true },
+    );
+
+    void audio.play().catch(() => undefined);
+  };
+
+  playSource(0);
+};
+
+const playStudyPreviewAudio = () => {
+  playPreviewAudio([studyVoiceoverSrc]);
+};
+
+const playClinicPreviewAudio = () => {
+  playPreviewAudio(clinicVoiceoverSources);
+};
+
 const clearStudyPreviewReplayTimer = () => {
   if (studyPreviewReplayTimer) {
     window.clearTimeout(studyPreviewReplayTimer);
@@ -686,6 +749,7 @@ const openStudyPreviewModal = () => {
   }
 
   replayStudyPreview();
+  playStudyPreviewAudio();
   isStudyPreviewModalOpen.value = true;
   void nextTick(() => {
     studyPreviewCloseButton.value?.focus();
@@ -698,6 +762,7 @@ const openClinicPreviewModal = () => {
   }
 
   replayClinicPreview();
+  playClinicPreviewAudio();
   isClinicPreviewModalOpen.value = true;
   void nextTick(() => {
     clinicPreviewCloseButton.value?.focus();
@@ -705,11 +770,19 @@ const openClinicPreviewModal = () => {
 };
 
 const closeClinicPreviewModal = () => {
+  const wasOpen = isClinicPreviewModalOpen.value;
   isClinicPreviewModalOpen.value = false;
+  if (wasOpen) {
+    stopPreviewAudio();
+  }
 };
 
 const closeStudyPreviewModal = () => {
+  const wasOpen = isStudyPreviewModalOpen.value;
   isStudyPreviewModalOpen.value = false;
+  if (wasOpen) {
+    stopPreviewAudio();
+  }
 };
 
 const toggleClinicPreviewModal = () => {
@@ -758,6 +831,9 @@ const handleClinicPreviewMessage = (event: MessageEvent) => {
     studyPreviewReplayTimer = window.setTimeout(() => {
       if (selectedUsageMode.value === "study") {
         studyPreviewReplayKey.value += 1;
+        if (isStudyPreviewModalOpen.value) {
+          playStudyPreviewAudio();
+        }
       }
     }, 700);
   }
@@ -771,6 +847,9 @@ const handleClinicPreviewMessage = (event: MessageEvent) => {
     clinicPreviewReplayTimer = window.setTimeout(() => {
       if (selectedUsageMode.value === "clinic") {
         clinicPreviewReplayKey.value += 1;
+        if (isClinicPreviewModalOpen.value) {
+          playClinicPreviewAudio();
+        }
       }
     }, 700);
   }
@@ -835,6 +914,7 @@ onBeforeUnmount(() => {
   document.body.style.overflow = previousBodyOverflow;
   clearStudyPreviewReplayTimer();
   clearClinicPreviewReplayTimer();
+  stopPreviewAudio();
 });
 
 </script>
