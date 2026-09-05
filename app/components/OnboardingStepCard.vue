@@ -1090,7 +1090,7 @@ onBeforeUnmount(() => {
 .plans-hero {
   position: relative;
   flex: none;
-  min-height: 192px;
+  min-height: 148px;
   margin: 12px 12px 0;
   overflow: hidden;
   border-radius: 10px;
@@ -1102,7 +1102,7 @@ onBeforeUnmount(() => {
   z-index: 1;
   display: flex;
   align-items: center;
-  min-height: 192px;
+  min-height: 148px;
   padding: 24px 34px;
 }
 
@@ -1129,7 +1129,7 @@ onBeforeUnmount(() => {
 
 .plans-body {
   gap: 0;
-  padding-top: 18px;
+  padding-top: 8px;
 }
 
 .plans-grid {
@@ -2182,13 +2182,13 @@ onBeforeUnmount(() => {
   }
 
   .plans-hero {
-    min-height: 176px;
+    min-height: 148px;
     margin: 10px 10px 0;
   }
 
   .plans-hero-content {
-    min-height: 176px;
-    padding: 22px 16px;
+    min-height: 148px;
+    padding: 18px 16px;
   }
 
   .plans-hero-copy h1 {

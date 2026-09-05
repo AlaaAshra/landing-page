@@ -358,16 +358,34 @@
       font-weight: 750;
     }
 
+    .tools-head > span:last-child {
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      color: #728094;
+      font-size: 0;
+    }
+
+    .tools-head > span:last-child::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border: 1.7px solid currentColor;
+      border-left-width: 4px;
+      border-radius: 2px;
+    }
+
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      gap: 8px;
     }
 
     .tool-card {
       position: relative;
-      min-height: 84px;
-      padding: 16px 44px 12px 13px;
+      min-height: 85px;
+      padding: 15px 43px 12px 13px;
       border: 1px solid #eef1f5;
       border-radius: 12px;
       color: #a6adb7;
@@ -396,8 +414,8 @@
 
     .tool-card strong {
       display: block;
-      font-size: 15px;
-      line-height: 1.16;
+      font-size: 14px;
+      line-height: 1.18;
     }
 
     .tool-card .arrow {
@@ -410,7 +428,14 @@
       height: 31px;
       border-radius: 999px;
       background: rgba(232, 235, 240, 0.72);
-      font-size: 24px;
+      font-size: 0;
+    }
+
+    .tool-card .arrow::before {
+      content: ">";
+      font-size: 19px;
+      line-height: 1;
+      transform: translateX(1px);
     }
 
     .tools.is-active .tool-card {
@@ -426,44 +451,44 @@
 
     .tools.is-active .flash-tool {
       color: #991b1b;
-      border-color: #ffd7db;
-      background: #fff0f2;
+      border-color: #fee2e2;
+      background: #fef2f2;
     }
 
     .tools.is-active .quiz-tool {
-      color: #1d4ed8;
-      border-color: #cfe1ff;
+      color: #1e3a8a;
+      border-color: #dbeafe;
       background: #eff6ff;
     }
 
     .tools.is-active .mind-tool {
-      color: #0e7490;
-      border-color: #c4f1f1;
-      background: #e8fbfb;
+      color: #164e63;
+      border-color: #cffafe;
+      background: #ecfeff;
     }
 
     .tools.is-active .short-tool {
-      color: #047857;
-      border-color: #c9f4dd;
+      color: #064e3b;
+      border-color: #d1fae5;
       background: #ecfdf5;
     }
 
     .tools.is-active .anatomy-tool {
-      color: #6d28d9;
-      border-color: #e3d8ff;
-      background: #f2ecff;
+      color: #4c1d95;
+      border-color: #ede9fe;
+      background: #f5f3ff;
     }
 
     .tools.is-active .notes-tool {
-      color: #0369a1;
-      border-color: #d5edfc;
-      background: #eaf7ff;
+      color: #0c4a6e;
+      border-color: #e0f2fe;
+      background: #f0f9ff;
     }
 
     .tools.is-active .white-tool {
-      color: #be123c;
-      border-color: #ffd8df;
-      background: #fff0f2;
+      color: #881337;
+      border-color: #ffe4e6;
+      background: #fff1f2;
     }
 
     .tool-card.is-highlighted {
@@ -1064,7 +1089,7 @@
       workspace.classList.remove("is-blurred");
       await wait(260);
       workspace.classList.add("is-final");
-      workspaceTitle.textContent = "Alaa";
+      workspaceTitle.textContent = "Workspace";
       sourceCount.textContent = "2 SOURCES";
       statsPill.classList.add("is-visible");
       await wait(180);

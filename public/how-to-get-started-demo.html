@@ -45,12 +45,14 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 1280px;
-      height: 800px;
+      width: 1365px;
+      height: 768px;
       overflow: hidden;
-      background: #ffffff;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(39, 213, 157, 0.2), transparent 30%),
+        linear-gradient(90deg, #f6fbfa 0%, #f8fafc 44%, #f4f7fb 100%);
       isolation: isolate;
-      margin: -400px 0 0 -640px;
+      margin: -384px 0 0 -682.5px;
       transform: scale(var(--demo-scale, 1));
       transform-origin: center center;
     }
@@ -58,10 +60,7 @@
     .workspace {
       position: absolute;
       inset: 0;
-      display: grid;
-      grid-template-columns: 300px minmax(0, 1fr) 338px;
-      gap: 18px;
-      padding: 24px;
+      padding: 12px 12px 16px;
       transform-origin: var(--origin-x, 86%) var(--origin-y, 26%);
       transition:
         transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -77,108 +76,227 @@
       transform: scale(1.08);
     }
 
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 38px;
+      padding: 0 14px;
+      color: #182230;
+    }
+
+    .workspace-name,
+    .top-actions,
+    .panel-heading,
+    .side-heading {
+      display: flex;
+      align-items: center;
+    }
+
+    .workspace-name {
+      gap: 13px;
+      font-size: 20px;
+      font-weight: 780;
+    }
+
+    .workspace-name svg,
+    .top-actions svg,
+    .side-heading svg,
+    .panel-control svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.9;
+    }
+
+    .workspace-edit {
+      color: #8a98aa;
+    }
+
+    .top-actions {
+      gap: 24px;
+      color: #667386;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 340px minmax(0, 1fr) 340px;
+      gap: 12px;
+      height: calc(100% - 49px);
+      margin-top: 11px;
+    }
+
     .panel {
       min-height: 0;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: #ffffff;
-      box-shadow: 0 10px 30px rgba(17, 24, 39, 0.05);
+      border: 1px solid #dfe5ed;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+    }
+
+    .panel-heading {
+      justify-content: space-between;
+      min-height: 28px;
+      color: #1f2937;
+      font-size: 16px;
+      font-weight: 720;
+    }
+
+    .side-heading {
+      gap: 14px;
+    }
+
+    .panel-control {
+      display: inline-grid;
+      place-items: center;
+      color: #728094;
     }
 
     .left-panel {
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-      gap: 18px;
-      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 16px;
     }
 
     .panel-title {
       margin: 0;
-      font-size: 17px;
-      font-weight: 750;
+      font-size: 16px;
+      font-weight: 720;
       letter-spacing: 0;
     }
 
-    .new-workspace {
+    .new-workspace,
+    .add-sources {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      height: 44px;
-      border-radius: 12px;
-      color: #ffffff;
-      background: var(--teal);
-      font-size: 14px;
-      font-weight: 750;
-      box-shadow: 0 12px 24px rgba(37, 199, 165, 0.28);
+      gap: 10px;
+      min-height: 43px;
+      border: 1px solid #dfe5ed;
+      border-radius: 999px;
+      color: #3f4958;
+      background: #ffffff;
+      box-shadow: 0 5px 13px rgba(15, 23, 42, 0.04);
+      font-size: 15px;
+      font-weight: 640;
     }
 
-    .new-workspace span {
-      display: grid;
-      place-items: center;
-      width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.22);
-      font-size: 18px;
+    .new-workspace {
+      margin-top: 26px;
+    }
+
+    .new-workspace span,
+    .add-sources span {
+      color: #4b5563;
+      font-size: 25px;
+      font-weight: 320;
       line-height: 1;
+      transform: translateY(-1px);
     }
 
     .saved-box {
       display: grid;
+      flex: 1;
       place-items: center;
-      min-height: 440px;
-      border: 1px dashed #d9dee7;
-      border-radius: 18px;
-      background: #fafbfc;
       text-align: center;
-      color: #9aa3af;
-      font-size: 14px;
+      color: #8994a5;
+      font-size: 13px;
       line-height: 1.45;
+    }
+
+    .saved-box-inner {
+      width: 100%;
+      padding-bottom: 34px;
+    }
+
+    .saved-box svg {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 15px;
+      color: #d1d5db;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
     }
 
     .saved-box strong {
       display: block;
-      margin-bottom: 6px;
-      color: #5c6675;
-      font-size: 15px;
+      margin-bottom: 9px;
+      color: #4b5563;
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .saved-box p {
+      margin: 0 auto 12px;
+      max-width: 262px;
     }
 
     .chat-panel {
       position: relative;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      padding: 22px;
+      overflow: hidden;
+      padding: 16px 16px 0;
     }
 
     .chat-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: block;
     }
 
-    .chat-status {
-      padding: 8px 12px;
-      border: 1px solid #edf0f4;
+    .chat-header .panel-title {
+      display: block;
+    }
+
+    .chat-status,
+    .chat-main h1,
+    .chat-main p,
+    .send {
+      display: none;
+    }
+
+    .chat-scrollbar {
+      position: absolute;
+      top: 49px;
+      right: 3px;
+      width: 5px;
+      height: 341px;
       border-radius: 999px;
-      color: #98a1ad;
-      background: #fbfcfd;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+      background: rgba(202, 245, 244, 0.82);
     }
 
-    .chat-main {
-      display: grid;
-      place-items: center;
-      text-align: center;
+    .chat-scrollbar::before,
+    .chat-scrollbar::after {
+      content: "";
+      position: absolute;
+      left: 1px;
+      width: 0;
+      height: 0;
+      border-right: 2px solid transparent;
+      border-left: 2px solid transparent;
+    }
+
+    .chat-scrollbar::before {
+      top: -8px;
+      border-bottom: 4px solid rgba(162, 229, 231, 0.9);
+    }
+
+    .chat-scrollbar::after {
+      bottom: -42px;
+      border-top: 4px solid rgba(162, 229, 231, 0.9);
     }
 
     .hero-sphere-logo {
+      position: absolute;
+      top: 54px;
+      left: 50%;
       display: block;
-      width: 118px;
-      height: 118px;
-      margin: 0 auto 22px;
+      width: 112px;
+      height: 112px;
+      margin-left: -56px;
       overflow: visible;
       animation: sina-hero-float 3s ease-in-out infinite;
       filter: drop-shadow(0 22px 44px rgba(59, 130, 246, 0.22));
@@ -188,78 +306,220 @@
       animation: sina-hero-star-float 4s ease-in-out infinite;
     }
 
-    .chat-main h1 {
-      margin: 0 0 8px;
-      font-size: 28px;
-      letter-spacing: -0.02em;
+    .how-card {
+      position: absolute;
+      top: 257px;
+      right: 54px;
+      left: 44px;
+      min-height: 108px;
+      padding: 17px 17px 15px;
+      border: 1px solid rgba(209, 216, 226, 0.86);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.86);
     }
 
-    .chat-main p {
-      max-width: 370px;
-      margin: 0;
-      color: #8b95a3;
+    .how-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #111827;
       font-size: 15px;
-      line-height: 1.5;
+      font-weight: 760;
+    }
+
+    .how-card p {
+      max-width: 520px;
+      margin: 0;
+      color: #576474;
+      font-size: 15px;
+      line-height: 1.55;
     }
 
     .chat-input {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      height: 58px;
-      padding: 0 12px 0 18px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      color: #9aa3af;
+      position: absolute;
+      right: 24px;
+      bottom: 58px;
+      left: 24px;
+      height: 140px;
+      border: 1px solid #eef1f5;
+      border-radius: 30px;
+      color: #9aaeca;
       background: #ffffff;
-      box-shadow: 0 12px 34px rgba(17, 24, 39, 0.06);
-      font-size: 15px;
+      box-shadow: 0 20px 42px rgba(15, 23, 42, 0.06);
+      font-size: 16px;
     }
 
-    .send {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      margin-left: auto;
-      border-radius: 12px;
-      color: #ffffff;
-      background: var(--teal);
-      font-weight: 900;
+    .chat-input::before {
+      content: "INTERNAL CURRICULUM";
+      position: absolute;
+      top: -34px;
+      right: 8px;
+      color: #9aa3af;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.15em;
+    }
+
+    .chat-input::after {
+      content: "+";
+      position: absolute;
+      bottom: 23px;
+      left: 28px;
+      color: #607895;
+      font-size: 24px;
+      font-weight: 320;
+      line-height: 1;
+    }
+
+    .chat-input > span:first-child {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      left: 14px;
+      display: flex;
+      align-items: center;
+      height: 76px;
+      padding: 0 28px;
+      border-radius: 23px;
+      background: #f8fafc;
+    }
+
+    .composer-tools {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .composer-tools {
+      right: 16px;
+      bottom: 16px;
+      gap: 14px;
+      color: #607895;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+    }
+
+    .composer-tool,
+    .mode-tool {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .composer-tool {
+      min-width: 36px;
+      min-height: 28px;
+      border-radius: 999px;
+      background: #f1f5f9;
+    }
+
+    .composer-tool svg,
+    .mode-tool svg,
+    .stats-bar svg,
+    .tool-card svg {
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .composer-tool svg,
+    .mode-tool svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 1.8;
+    }
+
+    .mode-tool {
+      min-width: auto;
+      background: transparent;
+      font-size: 8px;
     }
 
     .stats-bar {
       position: absolute;
-      right: 22px;
-      bottom: 92px;
-      left: 22px;
+      right: 0;
+      bottom: 0;
+      left: 0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      border: 1px solid #edf0f4;
-      border-radius: 14px;
-      color: #8d96a3;
-      background: #fbfcfd;
+      gap: 13px;
+      height: 42px;
+      padding: 0 21px;
+      border-top: 1px solid #dfe5ed;
+      color: #0f172a;
+      background: rgba(236, 251, 255, 0.76);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .stats-bar svg {
+      width: 18px;
+      height: 18px;
+      color: #2563eb;
+      stroke-width: 2;
+    }
+
+    .stats-bar strong {
+      padding: 3px 10px;
+      border-radius: 999px;
+      color: #2563eb;
+      background: #dbeafe;
       font-size: 13px;
-      font-weight: 650;
+      line-height: 1;
+    }
+
+    .stats-chevron {
+      margin-left: auto;
+      color: #8aa0b6;
+      font-size: 17px;
+      font-weight: 400;
     }
 
     .tools-panel {
-      padding: 16px;
+      padding: 18px 16px;
     }
 
     .tools-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 26px;
+      margin-bottom: 30px;
+    }
+
+    .tools-top > span {
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      color: #728094;
+      font-size: 0;
+    }
+
+    .tools-top > span::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border: 1.7px solid currentColor;
+      border-left-width: 4px;
+      border-radius: 2px;
+    }
+
+    .tools-top > span svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.9;
     }
 
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      gap: 8px;
     }
 
     .tool-card {
@@ -267,45 +527,51 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 76px;
-      padding: 14px 44px 12px 13px;
-      border: 1px solid #eef0f4;
-      border-radius: 13px;
-      color: #a0a7b1;
-      background: #fbfbfc;
+      min-height: 85px;
+      padding: 15px 43px 12px 13px;
+      border: 1px solid #eef1f5;
+      border-radius: 12px;
+      color: #374151;
+      background: #f9fafb;
+      filter: none;
+      opacity: 1;
       transition:
         box-shadow 180ms ease,
         filter 180ms ease,
+        opacity 180ms ease,
         transform 180ms ease;
     }
 
     .tool-card svg {
       width: 18px;
       height: 18px;
-      fill: none;
-      stroke: currentColor;
-      stroke-linecap: round;
-      stroke-linejoin: round;
       stroke-width: 2;
     }
 
     .tool-card strong {
-      font-size: 15px;
-      line-height: 1.14;
+      font-size: 14px;
+      line-height: 1.18;
     }
 
     .tool-arrow {
       position: absolute;
       top: 26px;
-      right: 13px;
+      right: 12px;
       display: grid;
       place-items: center;
       width: 32px;
       height: 32px;
       border-radius: 999px;
       background: rgba(232, 235, 240, 0.62);
-      font-size: 24px;
+      font-size: 0;
       line-height: 1;
+    }
+
+    .tool-arrow::before {
+      content: ">";
+      font-size: 19px;
+      line-height: 1;
+      transform: translateX(1px);
     }
 
     .study-card {
@@ -324,22 +590,46 @@
       animation: studySpotlight 1600ms ease-in-out infinite;
     }
 
+    .flash-card {
+      color: #991b1b;
+      border-color: #fee2e2;
+      background: #fef2f2;
+    }
+
+    .quiz-card {
+      color: #1e3a8a;
+      border-color: #dbeafe;
+      background: #eff6ff;
+    }
+
+    .mind-card {
+      color: #164e63;
+      border-color: #cffafe;
+      background: #ecfeff;
+    }
+
+    .short-card {
+      color: #064e3b;
+      border-color: #d1fae5;
+      background: #ecfdf5;
+    }
+
     .anatomy-card {
-      color: var(--purple-ink);
-      border-color: #e1d7fa;
-      background: var(--purple);
+      color: #4c1d95;
+      border-color: #ede9fe;
+      background: #f5f3ff;
     }
 
     .notes-card {
-      color: #0369a1;
-      border-color: #d4eefc;
-      background: var(--blue);
+      color: #0c4a6e;
+      border-color: #e0f2fe;
+      background: #f0f9ff;
     }
 
     .whiteboard-card {
-      color: #b01e4b;
-      border-color: #f7d5dc;
-      background: var(--pink);
+      color: #881337;
+      border-color: #ffe4e6;
+      background: #fff1f2;
     }
 
     .click-ripple {
@@ -603,7 +893,7 @@
       width: 24px;
       height: 24px;
       pointer-events: none;
-      transform: translate3d(620px, 390px, 0);
+      transform: translate3d(672px, 244px, 0);
       transition: transform 500ms cubic-bezier(0.45, 0, 0.2, 1);
       filter: drop-shadow(0 8px 14px rgba(17, 24, 39, 0.22));
     }
@@ -720,13 +1010,39 @@
 <body>
   <main class="frame" id="frame" aria-label="How to get started demo animation">
     <section class="workspace" id="workspace" aria-label="Workspace dashboard">
-      <aside class="panel left-panel">
-        <h2 class="panel-title">Workspaces &amp; Plans</h2>
-        <div class="new-workspace"><span>+</span> New Workspace</div>
-        <div class="saved-box">
-          <p><strong>Saved sources</strong>Add a lecture, PDF, video, or question set to begin.</p>
+      <header class="topbar">
+        <div class="workspace-name">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10" /><path d="M9 20v-6h6v6" /></svg>
+          <span>Workspace</span>
+          <svg class="workspace-edit" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="m16.5 3.5 4 4L8 20H4v-4Z" /></svg>
         </div>
-      </aside>
+        <div class="top-actions" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7h.01" /></svg>
+          <svg viewBox="0 0 24 24"><path d="M20 14.5A7.5 7.5 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z" /></svg>
+        </div>
+      </header>
+
+      <div class="workspace-grid">
+        <aside class="panel left-panel">
+          <div class="panel-heading">
+            <span class="side-heading">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+              <span>Workspaces &amp; Plans</span>
+            </span>
+            <span class="panel-control" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M15 4h4v16h-4" /><path d="M10 8 6 12l4 4" /></svg>
+            </span>
+          </div>
+          <div class="new-workspace"><span>+</span> New Workspace</div>
+          <div class="saved-box">
+            <div class="saved-box-inner">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z" /><path d="M14 3v6h6M10 13h6M10 17h5" /></svg>
+              <strong>Saved sources</strong>
+              <p>Add files or saved sources to study from.</p>
+              <div class="add-sources"><span>+</span> Add sources</div>
+            </div>
+          </div>
+        </aside>
 
       <section class="panel chat-panel" aria-label="Chat panel">
         <div class="chat-header">
@@ -778,12 +1094,28 @@
             <p>Upload study material, ask focused questions, and track what you have covered.</p>
           </div>
         </div>
+        <div class="how-card">
+          <strong>How To Start</strong>
+          <p>Add sources or choose the internal curriculum, then ask Sina to explain, quiz, or summarize.</p>
+        </div>
+        <div class="chat-scrollbar" aria-hidden="true"></div>
         <div class="stats-bar">
-          <span>Learning Objective Stats</span>
-          <strong>0% covered</strong>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 17v-6M12 17V7M16 17v-3" /></svg>
+          <span>workspace Stats</span>
+          <strong>0% LO</strong>
+          <span class="stats-chevron" aria-hidden="true">&#8964;</span>
         </div>
         <div class="chat-input">
           <span>Ask a study question...</span>
+          <span class="composer-tools" aria-hidden="true">
+            <span class="mode-tool">
+              <svg viewBox="0 0 24 24"><path d="M4 5h7a3 3 0 0 1 3 3v11a3 3 0 0 0-3-3H4Z" /><path d="M20 5h-7a3 3 0 0 0-3 3v11a3 3 0 0 1 3-3h7Z" /></svg>
+              MODE
+            </span>
+            <span class="composer-tool"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3" /></svg></span>
+            <span class="composer-tool"><svg viewBox="0 0 24 24"><path d="M4 12v4M8 9v10M12 7v14M16 10v8M20 12v4" /></svg></span>
+            <span class="composer-tool"><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9" /><path d="M10 5H5v14h14v-5" /></svg></span>
+          </span>
           <span class="send">↑</span>
         </div>
       </section>
@@ -799,22 +1131,22 @@
             <strong>Make Study<br />Plan</strong>
             <span class="tool-arrow">›</span>
           </div>
-          <div class="tool-card">
+          <div class="tool-card flash-card">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7a3 3 0 0 1 3 3v11a3 3 0 0 0-3-3H4Z" /><path d="M20 5h-7a3 3 0 0 0-3 3v11a3 3 0 0 1 3-3h7Z" /></svg>
             <strong>Flashcards</strong>
             <span class="tool-arrow">›</span>
           </div>
-          <div class="tool-card">
+          <div class="tool-card quiz-card">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l2 2 4-5" /><path d="M5 4h14v16H5Z" /></svg>
             <strong>Quiz</strong>
             <span class="tool-arrow">›</span>
           </div>
-          <div class="tool-card">
+          <div class="tool-card mind-card">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v5M7 14h10M7 14v5M17 14v5M12 9h-3v5h6V9Z" /><path d="M5 19h4M15 19h4" /></svg>
             <strong>Mind Map</strong>
             <span class="tool-arrow">›</span>
           </div>
-          <div class="tool-card">
+          <div class="tool-card short-card">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h6l4 4v14H8Z" /><path d="M14 3v5h5M10 13h6M10 17h4" /></svg>
             <strong>Short<br />Answer<br />Question</strong>
             <span class="tool-arrow">›</span>
@@ -835,7 +1167,8 @@
             <span class="tool-arrow">›</span>
           </div>
         </div>
-      </aside>
+        </aside>
+      </div>
     </section>
 
     <section class="modal-stage" id="modalStage" aria-label="Make a study plan modal">
@@ -919,7 +1252,7 @@
     }
 
     function resizeDemo() {
-      demoScale = Math.min(window.innerWidth / 1280, window.innerHeight / 800);
+      demoScale = Math.min(window.innerWidth / 1365, window.innerHeight / 768);
       document.documentElement.style.setProperty("--demo-scale", demoScale);
     }
 
