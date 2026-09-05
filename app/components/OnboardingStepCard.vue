@@ -35,7 +35,7 @@
             <div class="plans-hero-content">
               <div class="plans-hero-copy">
                 <h1 id="onboarding-title">Start your free trial now</h1>
-                <p>&mdash; you won't be charged until it ends.</p>
+                <p>you wont be charged until it ends. cancel any time</p>
               </div>
             </div>
           </div>
@@ -317,6 +317,7 @@
             :src="clinicPreviewModalSrc"
             :title="clinicPreviewFrameTitle"
             variant="expanded"
+            @load="handleClinicPreviewModalLoad"
           />
         </div>
       </div>
@@ -352,6 +353,7 @@
             :src="studyPreviewModalSrc"
             :title="studyPreviewFrameTitle"
             variant="expanded"
+            @load="handleStudyPreviewModalLoad"
           />
         </div>
       </div>
@@ -416,6 +418,7 @@ let isBodyOverflowLocked = false;
 let activePreviewAudio: HTMLAudioElement | undefined;
 let activePreviewBackgroundMusic: HTMLAudioElement | undefined;
 let activePreviewAudioRunId = 0;
+let pendingPreviewAudioMode: "study" | "clinic" | null = null;
 
 const currentStep = computed<1 | 2 | 3>(() => {
   if (route.query.step === "1") {
@@ -755,6 +758,35 @@ const playClinicPreviewAudio = () => {
   playPreviewAudio(clinicVoiceoverSources);
 };
 
+const queuePreviewAudioForModalLoad = (mode: "study" | "clinic") => {
+  pendingPreviewAudioMode = mode;
+  stopPreviewAudio();
+};
+
+const clearPendingPreviewAudio = (mode?: "study" | "clinic") => {
+  if (!mode || pendingPreviewAudioMode === mode) {
+    pendingPreviewAudioMode = null;
+  }
+};
+
+const handleStudyPreviewModalLoad = () => {
+  if (!isStudyPreviewModalOpen.value || pendingPreviewAudioMode !== "study") {
+    return;
+  }
+
+  clearPendingPreviewAudio("study");
+  playStudyPreviewAudio();
+};
+
+const handleClinicPreviewModalLoad = () => {
+  if (!isClinicPreviewModalOpen.value || pendingPreviewAudioMode !== "clinic") {
+    return;
+  }
+
+  clearPendingPreviewAudio("clinic");
+  playClinicPreviewAudio();
+};
+
 const clearStudyPreviewReplayTimer = () => {
   if (studyPreviewReplayTimer) {
     window.clearTimeout(studyPreviewReplayTimer);
@@ -797,9 +829,9 @@ const openStudyPreviewModal = () => {
     return;
   }
 
-  replayStudyPreview();
-  playStudyPreviewAudio();
+  queuePreviewAudioForModalLoad("study");
   isStudyPreviewModalOpen.value = true;
+  replayStudyPreview();
   void nextTick(() => {
     studyPreviewCloseButton.value?.focus();
   });
@@ -810,9 +842,9 @@ const openClinicPreviewModal = () => {
     return;
   }
 
-  replayClinicPreview();
-  playClinicPreviewAudio();
+  queuePreviewAudioForModalLoad("clinic");
   isClinicPreviewModalOpen.value = true;
+  replayClinicPreview();
   void nextTick(() => {
     clinicPreviewCloseButton.value?.focus();
   });
@@ -821,6 +853,7 @@ const openClinicPreviewModal = () => {
 const closeClinicPreviewModal = () => {
   const wasOpen = isClinicPreviewModalOpen.value;
   isClinicPreviewModalOpen.value = false;
+  clearPendingPreviewAudio("clinic");
   if (wasOpen) {
     stopPreviewAudio();
   }
@@ -829,6 +862,7 @@ const closeClinicPreviewModal = () => {
 const closeStudyPreviewModal = () => {
   const wasOpen = isStudyPreviewModalOpen.value;
   isStudyPreviewModalOpen.value = false;
+  clearPendingPreviewAudio("study");
   if (wasOpen) {
     stopPreviewAudio();
   }
@@ -879,10 +913,10 @@ const handleClinicPreviewMessage = (event: MessageEvent) => {
     clearStudyPreviewReplayTimer();
     studyPreviewReplayTimer = window.setTimeout(() => {
       if (selectedUsageMode.value === "study") {
-        studyPreviewReplayKey.value += 1;
         if (isStudyPreviewModalOpen.value) {
-          playStudyPreviewAudio();
+          queuePreviewAudioForModalLoad("study");
         }
+        studyPreviewReplayKey.value += 1;
       }
     }, 700);
   }
@@ -895,10 +929,10 @@ const handleClinicPreviewMessage = (event: MessageEvent) => {
     clearClinicPreviewReplayTimer();
     clinicPreviewReplayTimer = window.setTimeout(() => {
       if (selectedUsageMode.value === "clinic") {
-        clinicPreviewReplayKey.value += 1;
         if (isClinicPreviewModalOpen.value) {
-          playClinicPreviewAudio();
+          queuePreviewAudioForModalLoad("clinic");
         }
+        clinicPreviewReplayKey.value += 1;
       }
     }, 700);
   }
@@ -1104,6 +1138,7 @@ onBeforeUnmount(() => {
   align-items: center;
   min-height: 148px;
   padding: 24px 34px;
+  padding-inline-start: 70px;
 }
 
 .plans-hero-copy {
@@ -2189,6 +2224,7 @@ onBeforeUnmount(() => {
   .plans-hero-content {
     min-height: 148px;
     padding: 18px 16px;
+    padding-inline-start: 60px;
   }
 
   .plans-hero-copy h1 {

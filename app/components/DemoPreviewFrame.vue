@@ -6,11 +6,16 @@
       allow="autoplay"
       loading="lazy"
       tabindex="-1"
+      @load="emit('load')"
     ></iframe>
   </div>
 </template>
 
 <script setup lang="ts">
+const emit = defineEmits<{
+  load: [];
+}>();
+
 withDefaults(
   defineProps<{
     src: string;
