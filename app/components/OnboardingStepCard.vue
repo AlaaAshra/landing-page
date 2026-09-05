@@ -35,7 +35,7 @@
             <div class="plans-hero-content">
               <div class="plans-hero-copy">
                 <h1 id="onboarding-title">Start your free trial now</h1>
-                <p>you wont be charged until it ends. cancel any time</p>
+                <p>You won’t be charged until it ends. Cancel anytime.</p>
               </div>
             </div>
           </div>
@@ -1142,7 +1142,7 @@ onBeforeUnmount(() => {
 }
 
 .plans-hero-copy {
-  max-width: 390px;
+  max-width: 560px;
 }
 
 .plans-hero-copy h1 {
@@ -1160,6 +1160,7 @@ onBeforeUnmount(() => {
   font-size: clamp(15px, 1.7vw, 18px);
   font-weight: 500;
   line-height: 1.35;
+  white-space: nowrap;
 }
 
 .plans-body {
@@ -2234,6 +2235,7 @@ onBeforeUnmount(() => {
   .plans-hero-copy p {
     margin-top: 8px;
     font-size: 13px;
+    white-space: normal;
   }
 
   .onboarding-body,
