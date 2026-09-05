@@ -276,7 +276,13 @@
             <span aria-hidden="true">&#128161;</span>
             {{ activeCopy.editLater }}
           </p>
-          <button class="onboarding-continue" type="button" tabindex="0" @click="handleContinue">
+          <button
+            class="onboarding-continue"
+            type="button"
+            tabindex="0"
+            :disabled="currentStep === 2 && !selectedUsageMode"
+            @click="handleContinue"
+          >
             <span class="button-spinner-slot" aria-hidden="true">
               <span></span>
             </span>
@@ -403,7 +409,7 @@ const route = useRoute();
 const router = useRouter();
 const selectedLanguage = ref("en-US");
 const agentName = ref("Sina");
-const selectedUsageMode = useState<UsageModeId>("onboarding-usage-mode", () => "study");
+const selectedUsageMode = useState<UsageModeId | null>("onboarding-usage-mode", () => null);
 const selectedPlan = ref<PlanTier | null>(null);
 const studyPreviewReplayKey = ref(0);
 const clinicPreviewReplayKey = ref(0);
@@ -652,7 +658,7 @@ const handleContinue = () => {
     return;
   }
 
-  if (currentStep.value === 2) {
+  if (currentStep.value === 2 && selectedUsageMode.value) {
     goToThirdStep();
     return;
   }
