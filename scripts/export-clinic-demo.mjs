@@ -19,6 +19,8 @@ const audioPaths = [
   "clinic-onboarding-6.mp3",
   "clinic-onboarding-7.mp3",
 ].map((fileName) => path.join(publicDir, "audio", fileName));
+const backgroundMusicPath = path.join(publicDir, "audio", "onboarding-background-music.mp3");
+const backgroundMusicVolume = 0.12;
 const chromePath = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const httpPort = Number(process.env.EXPORT_HTTP_PORT || 4177);
 const debugPort = Number(process.env.EXPORT_DEBUG_PORT || 9223);
@@ -289,7 +291,12 @@ async function main() {
       "-f", "concat",
       "-safe", "0",
       "-i", audioConcatPathname,
+      "-stream_loop", "-1",
+      "-i", backgroundMusicPath,
       "-t", String(captureSeconds),
+      "-filter_complex", `[2:a]volume=${backgroundMusicVolume}[music];[1:a][music]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[a]`,
+      "-map", "0:v",
+      "-map", "[a]",
       "-vf", "fps=30,format=yuv420p",
       "-c:v", "libx264",
       "-preset", "medium",

@@ -40,6 +40,7 @@
   <main class="stage" aria-label="Study mode getting started animation">
     <iframe id="demo-frame" title="Study mode getting started animation" tabindex="-1"></iframe>
     <audio id="voiceover" preload="auto" src="/audio/study-get-started-voiceover.mp3"></audio>
+    <audio id="backgroundMusic" preload="auto" loop src="/audio/onboarding-background-music.mp3"></audio>
   </main>
 
   <script>
@@ -60,9 +61,11 @@
 
     const frame = document.getElementById("demo-frame");
     const voiceover = document.getElementById("voiceover");
+    const backgroundMusic = document.getElementById("backgroundMusic");
     const search = new URLSearchParams(window.location.search);
     const playKey = search.get("play") || String(Date.now());
     const shouldPlayAudio = search.get("audio") === "1";
+    const backgroundMusicVolume = 0.12;
     let currentIndex = 0;
     let fallbackTimer;
     let audioWasBlocked = false;
@@ -81,7 +84,29 @@
     }
 
     function notifyComplete() {
+      stopAudio();
       window.parent.postMessage({ type: "study-demo-complete" }, window.location.origin);
+    }
+
+    function startBackgroundMusic(restart = false) {
+      if (!shouldPlayAudio) {
+        return;
+      }
+
+      backgroundMusic.volume = backgroundMusicVolume;
+
+      if (restart) {
+        backgroundMusic.currentTime = 0;
+      }
+
+      void backgroundMusic.play().catch(() => undefined);
+    }
+
+    function stopAudio() {
+      voiceover.pause();
+      voiceover.currentTime = 0;
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
     }
 
     function startVoiceover() {
@@ -89,6 +114,7 @@
         return;
       }
 
+      startBackgroundMusic(true);
       voiceover.currentTime = 0;
       const playPromise = voiceover.play();
 
@@ -99,6 +125,7 @@
           })
           .catch(() => {
             audioWasBlocked = true;
+            stopAudio();
           });
       }
     }
@@ -108,6 +135,7 @@
         return;
       }
 
+      startBackgroundMusic();
       void voiceover.play().then(() => {
         audioWasBlocked = false;
       }).catch(() => undefined);
@@ -167,7 +195,7 @@
     window.addEventListener("keydown", retryVoiceover);
 
     window.addEventListener("pagehide", () => {
-      voiceover.pause();
+      stopAudio();
     });
   </script>
 </body>

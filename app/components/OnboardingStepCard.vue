@@ -104,13 +104,19 @@
         </template>
 
         <template v-else>
-        <div class="onboarding-hero" :class="currentStep === 1 ? 'is-intro-step' : 'is-integration-step'">
-          <button v-if="currentStep === 2" class="onboarding-back" type="button" aria-label="Back" @click="goToPreviousStep">
+        <div v-if="currentStep === 1" class="onboarding-hero is-intro-step"></div>
+
+        <button
+          v-else
+          class="onboarding-back onboarding-back-inline"
+          type="button"
+          aria-label="Back"
+          @click="goToPreviousStep"
+        >
             <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
               <path d="m15 18-6-6 6-6"></path>
             </svg>
-          </button>
-        </div>
+        </button>
 
         <div v-if="currentStep === 1" class="onboarding-body">
           <div class="onboarding-copy">
@@ -408,6 +414,7 @@ let clinicPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let previousBodyOverflow = "";
 let isBodyOverflowLocked = false;
 let activePreviewAudio: HTMLAudioElement | undefined;
+let activePreviewBackgroundMusic: HTMLAudioElement | undefined;
 let activePreviewAudioRunId = 0;
 
 const currentStep = computed<1 | 2 | 3>(() => {
@@ -580,6 +587,8 @@ const clinicPreviewModalSrc = computed(
 );
 
 const studyVoiceoverSrc = "/audio/study-get-started-voiceover.mp3";
+const previewBackgroundMusicSrc = "/audio/onboarding-background-music.mp3";
+const previewBackgroundMusicVolume = 0.12;
 const clinicVoiceoverSources = [
   "/audio/clinic-onboarding-1.mp3",
   "/audio/clinic-onboarding-2.mp3",
@@ -654,28 +663,59 @@ const selectPlan = (plan: PlanTier) => {
   selectedPlan.value = plan;
 };
 
-const stopPreviewAudio = () => {
-  activePreviewAudioRunId += 1;
-
-  if (!activePreviewAudio) {
+const stopAndRemovePreviewAudio = (audio?: HTMLAudioElement) => {
+  if (!audio) {
     return;
   }
 
-  activePreviewAudio.pause();
-  activePreviewAudio.currentTime = 0;
-  activePreviewAudio.remove();
+  audio.pause();
+  audio.currentTime = 0;
+  audio.remove();
+};
+
+const stopPreviewBackgroundMusic = () => {
+  stopAndRemovePreviewAudio(activePreviewBackgroundMusic);
+  activePreviewBackgroundMusic = undefined;
+};
+
+const startPreviewBackgroundMusic = () => {
+  stopPreviewBackgroundMusic();
+
+  const audio = new Audio(previewBackgroundMusicSrc);
+  activePreviewBackgroundMusic = audio;
+  audio.dataset.previewAudio = "true";
+  audio.style.display = "none";
+  audio.preload = "auto";
+  audio.loop = true;
+  audio.volume = previewBackgroundMusicVolume;
+  document.body.appendChild(audio);
+
+  void audio.play().catch(() => undefined);
+};
+
+const stopPreviewAudio = () => {
+  activePreviewAudioRunId += 1;
+  stopAndRemovePreviewAudio(activePreviewAudio);
   activePreviewAudio = undefined;
+  stopPreviewBackgroundMusic();
 };
 
 const playPreviewAudio = (sources: string[]) => {
   stopPreviewAudio();
   const runId = activePreviewAudioRunId;
+  startPreviewBackgroundMusic();
 
   const playSource = (index: number) => {
     if (runId !== activePreviewAudioRunId || index >= sources.length) {
+      if (runId === activePreviewAudioRunId) {
+        stopPreviewBackgroundMusic();
+        activePreviewAudio = undefined;
+      }
+
       return;
     }
 
+    stopAndRemovePreviewAudio(activePreviewAudio);
     const audio = new Audio(sources[index]);
     activePreviewAudio = audio;
     audio.dataset.previewAudio = "true";
@@ -686,13 +726,22 @@ const playPreviewAudio = (sources: string[]) => {
       "ended",
       () => {
         if (runId === activePreviewAudioRunId) {
+          stopAndRemovePreviewAudio(audio);
+          if (activePreviewAudio === audio) {
+            activePreviewAudio = undefined;
+          }
+
           playSource(index + 1);
         }
       },
       { once: true },
     );
 
-    void audio.play().catch(() => undefined);
+    void audio.play().catch(() => {
+      if (runId === activePreviewAudioRunId) {
+        stopPreviewBackgroundMusic();
+      }
+    });
   };
 
   playSource(0);
@@ -1045,7 +1094,7 @@ onBeforeUnmount(() => {
   margin: 12px 12px 0;
   overflow: hidden;
   border-radius: 10px;
-  background: linear-gradient(90deg, #fcf9f7 0%, #fbf5f3 46%, #f7f1ef 100%);
+  background: #ffffff;
 }
 
 .plans-hero-content {
@@ -1517,11 +1566,9 @@ onBeforeUnmount(() => {
 }
 
 .onboarding-hero.is-intro-step {
-  background: linear-gradient(135deg, #f9fafb 0%, #edf7f4 45%, #fff7ed 100%);
-}
-
-.onboarding-hero.is-integration-step {
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 48%, #f0fdf4 100%);
+  background-image: url("/images/onboarding-step-1-hero.png");
+  background-position: center;
+  background-size: cover;
 }
 
 .onboarding-back {
@@ -1558,6 +1605,15 @@ onBeforeUnmount(() => {
 .onboarding-back svg {
   width: 16px;
   height: 16px;
+}
+
+.onboarding-back-inline {
+  position: static;
+  align-self: flex-start;
+  margin: 12px 0 0 12px;
+  background: #f4f4f5;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .onboarding-body {

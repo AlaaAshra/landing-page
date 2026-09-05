@@ -3210,6 +3210,7 @@
     <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-5.mp3"></audio>
     <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-6.mp3"></audio>
     <audio class="segment-audio" preload="auto" src="/audio/clinic-onboarding-7.mp3"></audio>
+    <audio id="backgroundMusic" preload="auto" loop src="/audio/onboarding-background-music.mp3"></audio>
   </main>
 
   <script>
@@ -3429,6 +3430,7 @@
     const lang = params.get("lang") === "ar" ? "ar" : "en";
     const shouldPlayAudio = params.get("audio") === "1";
     const shouldAutoStart = params.get("manual") !== "1";
+    const backgroundMusicVolume = 0.12;
     const copy = translations[lang];
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -3442,6 +3444,7 @@
 
     const frame = document.getElementById("frame");
     const segmentAudios = Array.from(document.querySelectorAll(".segment-audio"));
+    const backgroundMusic = document.getElementById("backgroundMusic");
     const workspace = document.getElementById("workspace");
     const modalStage = document.getElementById("modalStage");
     const cursor = document.getElementById("cursor");
@@ -3537,6 +3540,7 @@
     }
 
     function completeDemo() {
+      stopBackgroundMusic();
       notifyDemoComplete();
 
       if (window.parent === window) {
@@ -4033,11 +4037,31 @@
         : fallbackSegmentDurations[index];
     }
 
+    function startBackgroundMusic(restart = false) {
+      if (!shouldPlayAudio) {
+        return;
+      }
+
+      backgroundMusic.volume = backgroundMusicVolume;
+
+      if (restart) {
+        backgroundMusic.currentTime = 0;
+      }
+
+      void backgroundMusic.play().catch(() => undefined);
+    }
+
+    function stopBackgroundMusic() {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+    }
+
     function stopAllAudio() {
       segmentAudios.forEach((audio) => {
         audio.pause();
         audio.currentTime = 0;
       });
+      stopBackgroundMusic();
     }
 
     function runSegment(index, runId) {
@@ -4072,6 +4096,7 @@
         if (playPromise) {
           playPromise.then(startVisuals).catch(() => {
             audio.removeEventListener("ended", handleEnded);
+            stopBackgroundMusic();
             audioWasBlocked = true;
             pendingAudioIndex = index;
           });
@@ -4093,6 +4118,7 @@
         return;
       }
 
+      startBackgroundMusic();
       runSegment(pendingAudioIndex, currentRunId);
     }
 
@@ -4102,6 +4128,7 @@
       window.clearTimeout(activeFallbackTimer);
       stopAllAudio();
       resetDemo();
+      startBackgroundMusic(true);
       runSegment(0, runId);
     }
 
