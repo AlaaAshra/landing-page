@@ -1,6 +1,20 @@
 <template>
   <div class="demo-preview-frame" :class="`is-${variant}`">
+    <video
+      v-if="mediaType === 'video'"
+      :src="src"
+      :title="title"
+      :autoplay="autoplay"
+      :muted="muted"
+      :loop="loop"
+      :controls="controls"
+      playsinline
+      preload="auto"
+      @loadeddata="emit('load')"
+      @ended="emit('ended')"
+    ></video>
     <iframe
+      v-else
       :src="src"
       :title="title"
       allow="autoplay"
@@ -14,15 +28,26 @@
 <script setup lang="ts">
 const emit = defineEmits<{
   load: [];
+  ended: [];
 }>();
 
 withDefaults(
   defineProps<{
     src: string;
     title: string;
+    mediaType?: "iframe" | "video";
     variant?: "landing" | "inline" | "expanded";
+    autoplay?: boolean;
+    controls?: boolean;
+    loop?: boolean;
+    muted?: boolean;
   }>(),
   {
+    autoplay: false,
+    controls: false,
+    loop: false,
+    mediaType: "iframe",
+    muted: true,
     variant: "inline",
   },
 );
@@ -35,11 +60,20 @@ withDefaults(
   background: #f4f6f8;
 }
 
-.demo-preview-frame iframe {
+.demo-preview-frame iframe,
+.demo-preview-frame video {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.demo-preview-frame iframe {
   border: 0;
+}
+
+.demo-preview-frame video {
+  background: #020617;
+  object-fit: contain;
 }
 
 .demo-preview-frame.is-landing {

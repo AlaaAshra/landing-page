@@ -166,7 +166,7 @@
                   v-for="mode in usageModes"
                   :key="mode.id"
                   class="integration-item-shell"
-                  :class="{ 'is-expanded': (mode.id === 'study' || mode.id === 'clinic') && selectedUsageMode === mode.id }"
+                  :class="{ 'is-expanded': hasUsageModePreview(mode.id) && selectedUsageMode === mode.id }"
                 >
                   <button
                     class="integration-item usage-mode-option"
@@ -174,7 +174,7 @@
                     type="button"
                     role="radio"
                     :aria-checked="selectedUsageMode === mode.id"
-                    :aria-expanded="mode.id === 'study' || mode.id === 'clinic' ? selectedUsageMode === mode.id : undefined"
+                    :aria-expanded="hasUsageModePreview(mode.id) ? selectedUsageMode === mode.id : undefined"
                     :aria-label="`${mode.name}: ${mode.description}`"
                     @click="selectUsageMode(mode.id)"
                   >
@@ -254,6 +254,41 @@
                             :src="clinicPreviewSrc"
                             :title="clinicPreviewFrameTitle"
                             variant="inline"
+                          />
+                          <span class="clinic-preview-expand" aria-hidden="true">
+                            <Maximize2 :size="15" :stroke-width="2" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </Transition>
+
+                  <Transition name="clinic-preview">
+                    <div
+                      v-if="mode.id === 'general-questions' && selectedUsageMode === 'general-questions'"
+                      class="clinic-preview-wrap"
+                      role="region"
+                      :aria-label="generalPreviewRegionLabel"
+                    >
+                      <div class="clinic-preview-inner">
+                        <div
+                          class="clinic-preview-open"
+                          role="button"
+                          tabindex="0"
+                          :aria-label="generalPreviewExpandLabel"
+                          @click="toggleGeneralPreviewModal"
+                          @keydown.enter.prevent="toggleGeneralPreviewModal"
+                          @keydown.space.prevent="toggleGeneralPreviewModal"
+                        >
+                          <DemoPreviewFrame
+                            :key="`general-preview-${generalPreviewReplayKey}`"
+                            :src="generalPreviewSrc"
+                            :title="generalPreviewFrameTitle"
+                            media-type="video"
+                            variant="inline"
+                            autoplay
+                            muted
+                            loop
                           />
                           <span class="clinic-preview-expand" aria-hidden="true">
                             <Maximize2 :size="15" :stroke-width="2" />
@@ -365,6 +400,46 @@
       </div>
     </Transition>
   </Teleport>
+
+  <Teleport to="body">
+    <Transition name="clinic-preview-modal">
+      <div
+        v-if="isGeneralPreviewModalOpen"
+        class="clinic-preview-modal-backdrop"
+        role="presentation"
+        @click.self="closeGeneralPreviewModal"
+      >
+        <div
+          class="clinic-preview-modal"
+          role="dialog"
+          aria-modal="true"
+          :aria-label="generalPreviewModalLabel"
+        >
+          <button
+            ref="generalPreviewCloseButton"
+            class="clinic-preview-modal-close"
+            type="button"
+            :aria-label="generalPreviewCloseLabel"
+            @click.stop="closeGeneralPreviewModal"
+          >
+            <X :size="20" :stroke-width="2" />
+          </button>
+
+          <DemoPreviewFrame
+            :key="`general-preview-modal-${generalPreviewReplayKey}`"
+            :src="generalPreviewSrc"
+            :title="generalPreviewFrameTitle"
+            media-type="video"
+            variant="expanded"
+            autoplay
+            controls
+            :muted="false"
+            @ended="handleGeneralPreviewEnded"
+          />
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -413,12 +488,16 @@ const selectedUsageMode = useState<UsageModeId | null>("onboarding-usage-mode", 
 const selectedPlan = ref<PlanTier | null>(null);
 const studyPreviewReplayKey = ref(0);
 const clinicPreviewReplayKey = ref(0);
+const generalPreviewReplayKey = ref(0);
 const isStudyPreviewModalOpen = ref(false);
 const isClinicPreviewModalOpen = ref(false);
+const isGeneralPreviewModalOpen = ref(false);
 const studyPreviewCloseButton = ref<HTMLButtonElement | null>(null);
 const clinicPreviewCloseButton = ref<HTMLButtonElement | null>(null);
+const generalPreviewCloseButton = ref<HTMLButtonElement | null>(null);
 let studyPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let clinicPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
+let generalPreviewReplayTimer: ReturnType<typeof window.setTimeout> | undefined;
 let previousBodyOverflow = "";
 let isBodyOverflowLocked = false;
 let activePreviewAudio: HTMLAudioElement | undefined;
@@ -496,6 +575,10 @@ const onboardingTranslations = {
         },
       ],
     },
+    generalPreview: {
+      regionLabel: "General questions mode preview",
+      frameTitle: "General questions demo video",
+    },
   },
   ar: {
     continue: "متابعة",
@@ -544,6 +627,10 @@ const onboardingTranslations = {
           description: "Turn the recording into a SOAP note, After Visit Summary, and clinical Q&A.",
         },
       ],
+    },
+    generalPreview: {
+      regionLabel: "General questions mode preview",
+      frameTitle: "General questions demo video",
     },
   },
 } as const;
@@ -594,6 +681,14 @@ const clinicPreviewSrc = computed(
 const clinicPreviewModalSrc = computed(
   () => `/clinic-add-patient-demo.html?play=${clinicPreviewReplayKey.value}&lang=${clinicPreviewLanguage.value}`,
 );
+const generalPreviewRegionLabel = computed(() => activeCopy.value.generalPreview.regionLabel);
+const generalPreviewFrameTitle = computed(() => activeCopy.value.generalPreview.frameTitle);
+const generalPreviewExpandLabel = "Expand general questions preview";
+const generalPreviewModalLabel = "Expanded general questions preview";
+const generalPreviewCloseLabel = "Close general questions preview";
+const generalPreviewSrc = "/videos/general-mode.mp4";
+const hasUsageModePreview = (mode: UsageModeId) =>
+  mode === "study" || mode === "clinic" || mode === "general-questions";
 
 const studyVoiceoverSrc = "/audio/study-get-started-voiceover.mp3";
 const previewBackgroundMusicSrc = "/audio/onboarding-background-music.mp3";
@@ -807,6 +902,13 @@ const clearClinicPreviewReplayTimer = () => {
   }
 };
 
+const clearGeneralPreviewReplayTimer = () => {
+  if (generalPreviewReplayTimer) {
+    window.clearTimeout(generalPreviewReplayTimer);
+    generalPreviewReplayTimer = undefined;
+  }
+};
+
 const replayStudyPreview = () => {
   clearStudyPreviewReplayTimer();
   studyPreviewReplayKey.value += 1;
@@ -815,6 +917,11 @@ const replayStudyPreview = () => {
 const replayClinicPreview = () => {
   clearClinicPreviewReplayTimer();
   clinicPreviewReplayKey.value += 1;
+};
+
+const replayGeneralPreview = () => {
+  clearGeneralPreviewReplayTimer();
+  generalPreviewReplayKey.value += 1;
 };
 
 const selectUsageMode = (mode: UsageModeId) => {
@@ -827,6 +934,11 @@ const selectUsageMode = (mode: UsageModeId) => {
 
   if (mode === "clinic") {
     openClinicPreviewModal();
+    return;
+  }
+
+  if (mode === "general-questions") {
+    openGeneralPreviewModal();
   }
 };
 
@@ -856,6 +968,19 @@ const openClinicPreviewModal = () => {
   });
 };
 
+const openGeneralPreviewModal = () => {
+  if (selectedUsageMode.value !== "general-questions") {
+    return;
+  }
+
+  stopPreviewAudio();
+  isGeneralPreviewModalOpen.value = true;
+  replayGeneralPreview();
+  void nextTick(() => {
+    generalPreviewCloseButton.value?.focus();
+  });
+};
+
 const closeClinicPreviewModal = () => {
   const wasOpen = isClinicPreviewModalOpen.value;
   isClinicPreviewModalOpen.value = false;
@@ -872,6 +997,11 @@ const closeStudyPreviewModal = () => {
   if (wasOpen) {
     stopPreviewAudio();
   }
+};
+
+const closeGeneralPreviewModal = () => {
+  isGeneralPreviewModalOpen.value = false;
+  clearGeneralPreviewReplayTimer();
 };
 
 const toggleClinicPreviewModal = () => {
@@ -892,6 +1022,15 @@ const toggleStudyPreviewModal = () => {
   openStudyPreviewModal();
 };
 
+const toggleGeneralPreviewModal = () => {
+  if (isGeneralPreviewModalOpen.value) {
+    closeGeneralPreviewModal();
+    return;
+  }
+
+  openGeneralPreviewModal();
+};
+
 const handleClinicPreviewKeydown = (event: KeyboardEvent) => {
   if (event.key !== "Escape") {
     return;
@@ -903,6 +1042,10 @@ const handleClinicPreviewKeydown = (event: KeyboardEvent) => {
 
   if (isClinicPreviewModalOpen.value) {
     closeClinicPreviewModal();
+  }
+
+  if (isGeneralPreviewModalOpen.value) {
+    closeGeneralPreviewModal();
   }
 };
 
@@ -944,6 +1087,19 @@ const handleClinicPreviewMessage = (event: MessageEvent) => {
   }
 };
 
+const handleGeneralPreviewEnded = () => {
+  if (selectedUsageMode.value !== "general-questions") {
+    return;
+  }
+
+  clearGeneralPreviewReplayTimer();
+  generalPreviewReplayTimer = window.setTimeout(() => {
+    if (selectedUsageMode.value === "general-questions") {
+      replayGeneralPreview();
+    }
+  }, 700);
+};
+
 watch(selectedUsageMode, (mode) => {
   if (mode === "study") {
     if (!isStudyPreviewModalOpen.value) {
@@ -951,7 +1107,9 @@ watch(selectedUsageMode, (mode) => {
     }
 
     closeClinicPreviewModal();
+    closeGeneralPreviewModal();
     clearClinicPreviewReplayTimer();
+    clearGeneralPreviewReplayTimer();
     return;
   }
 
@@ -961,14 +1119,30 @@ watch(selectedUsageMode, (mode) => {
     }
 
     closeStudyPreviewModal();
+    closeGeneralPreviewModal();
     clearStudyPreviewReplayTimer();
+    clearGeneralPreviewReplayTimer();
+    return;
+  }
+
+  if (mode === "general-questions") {
+    if (!isGeneralPreviewModalOpen.value) {
+      replayGeneralPreview();
+    }
+
+    closeStudyPreviewModal();
+    closeClinicPreviewModal();
+    clearStudyPreviewReplayTimer();
+    clearClinicPreviewReplayTimer();
     return;
   }
 
   closeStudyPreviewModal();
   closeClinicPreviewModal();
+  closeGeneralPreviewModal();
   clearStudyPreviewReplayTimer();
   clearClinicPreviewReplayTimer();
+  clearGeneralPreviewReplayTimer();
 });
 
 watch(selectedLanguage, () => {
@@ -977,8 +1151,8 @@ watch(selectedLanguage, () => {
   }
 });
 
-watch([isStudyPreviewModalOpen, isClinicPreviewModalOpen], ([isStudyOpen, isClinicOpen]) => {
-  if (isStudyOpen || isClinicOpen) {
+watch([isStudyPreviewModalOpen, isClinicPreviewModalOpen, isGeneralPreviewModalOpen], ([isStudyOpen, isClinicOpen, isGeneralOpen]) => {
+  if (isStudyOpen || isClinicOpen || isGeneralOpen) {
     if (!isBodyOverflowLocked) {
       previousBodyOverflow = document.body.style.overflow;
       isBodyOverflowLocked = true;
@@ -1003,6 +1177,7 @@ onBeforeUnmount(() => {
   document.body.style.overflow = previousBodyOverflow;
   clearStudyPreviewReplayTimer();
   clearClinicPreviewReplayTimer();
+  clearGeneralPreviewReplayTimer();
   stopPreviewAudio();
 });
 
@@ -1980,7 +2155,8 @@ onBeforeUnmount(() => {
   transform: translateY(0);
 }
 
-.clinic-preview-open :deep(iframe) {
+.clinic-preview-open :deep(iframe),
+.clinic-preview-open :deep(video) {
   pointer-events: none;
 }
 
