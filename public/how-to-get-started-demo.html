@@ -45,14 +45,14 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 1365px;
+      width: 1366px;
       height: 768px;
       overflow: hidden;
       background:
         radial-gradient(circle at 15% 0%, rgba(39, 213, 157, 0.2), transparent 30%),
         linear-gradient(90deg, #f6fbfa 0%, #f8fafc 44%, #f4f7fb 100%);
       isolation: isolate;
-      margin: -384px 0 0 -682.5px;
+      margin: -384px 0 0 -683px;
       transform: scale(var(--demo-scale, 1));
       transform-origin: center center;
     }
@@ -65,6 +65,46 @@
       transition:
         transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
         opacity 250ms ease;
+    }
+
+    .workspace-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .workspace > :not(.workspace-image):not(.study-hit-target) {
+      display: none;
+    }
+
+    .study-hit-target {
+      position: absolute;
+      z-index: 1;
+      left: 1030px;
+      top: 126px;
+      width: 150px;
+      height: 86px;
+      border-radius: 12px;
+      pointer-events: none;
+      transition:
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+    }
+
+    .study-hit-target.is-hovered {
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 34px rgba(153, 82, 33, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .study-hit-target.is-spotlight {
+      animation: studySpotlight 1600ms ease-in-out infinite;
     }
 
     .workspace.is-zoomed {
@@ -485,7 +525,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 30px;
+      margin-bottom: 26px;
     }
 
     .tools-top > span {
@@ -559,10 +599,10 @@
       right: 12px;
       display: grid;
       place-items: center;
-      width: 32px;
-      height: 32px;
+      width: 31px;
+      height: 31px;
       border-radius: 999px;
-      background: rgba(232, 235, 240, 0.62);
+      background: rgba(232, 235, 240, 0.72);
       font-size: 0;
       line-height: 1;
     }
@@ -1010,6 +1050,9 @@
 <body>
   <main class="frame" id="frame" aria-label="How to get started demo animation">
     <section class="workspace" id="workspace" aria-label="Workspace dashboard">
+      <img class="workspace-image" src="/images/workspace-how-to-start.png" alt="" draggable="false" />
+      <span class="study-hit-target" id="studyCard" aria-hidden="true"></span>
+
       <header class="topbar">
         <div class="workspace-name">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10" /><path d="M9 20v-6h6v6" /></svg>
@@ -1126,7 +1169,7 @@
           <span aria-hidden="true">⌁</span>
         </div>
         <div class="tools-grid">
-          <div class="tool-card study-card" id="studyCard">
+          <div class="tool-card study-card">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" /><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1" /></svg>
             <strong>Make Study<br />Plan</strong>
             <span class="tool-arrow">›</span>
@@ -1252,7 +1295,7 @@
     }
 
     function resizeDemo() {
-      demoScale = Math.min(window.innerWidth / 1365, window.innerHeight / 768);
+      demoScale = Math.min(window.innerWidth / 1366, window.innerHeight / 768);
       document.documentElement.style.setProperty("--demo-scale", demoScale);
     }
 

@@ -45,10 +45,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 1280px;
-      height: 800px;
+      width: 1366px;
+      height: 768px;
       overflow: hidden;
-      margin: -400px 0 0 -640px;
+      margin: -384px 0 0 -683px;
       background:
         radial-gradient(circle at 16% 6%, rgba(25, 213, 133, 0.15), transparent 28%),
         linear-gradient(90deg, #f5f8fb, #ffffff 42%, #f5f8fb);
@@ -60,10 +60,79 @@
     .workspace {
       position: absolute;
       inset: 0;
-      padding: 22px 12px 16px;
+      padding: 12px 12px 16px;
       transition:
         filter 280ms ease,
         opacity 260ms ease;
+    }
+
+    .workspace-image {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .workspace > :not(.workspace-image):not(.tool-highlight-layer) {
+      display: none;
+    }
+
+    .tool-highlight-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .tool-hotspot {
+      position: absolute;
+      width: 149px;
+      height: 86px;
+      border-radius: 12px;
+      transition:
+        box-shadow 180ms ease,
+        transform 180ms ease;
+    }
+
+    .tool-hotspot.is-highlighted {
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .tool-hotspot.flash-hotspot,
+    .tool-hotspot.quiz-hotspot,
+    .tool-hotspot.short-hotspot,
+    .tool-hotspot.notes-hotspot {
+      left: 1031px;
+    }
+
+    .tool-hotspot.mind-hotspot,
+    .tool-hotspot.anatomy-hotspot,
+    .tool-hotspot.white-hotspot {
+      left: 1188px;
+    }
+
+    .tool-hotspot.flash-hotspot {
+      top: 126px;
+    }
+
+    .tool-hotspot.quiz-hotspot,
+    .tool-hotspot.mind-hotspot {
+      top: 219px;
+    }
+
+    .tool-hotspot.short-hotspot,
+    .tool-hotspot.anatomy-hotspot {
+      top: 312px;
+    }
+
+    .tool-hotspot.notes-hotspot,
+    .tool-hotspot.white-hotspot {
+      top: 406px;
     }
 
     .workspace.is-blurred {
@@ -75,7 +144,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 42px;
+      height: 38px;
       padding: 0 16px;
       color: #1f2937;
     }
@@ -96,18 +165,18 @@
 
     .app-grid {
       display: grid;
-      grid-template-columns: 340px minmax(0, 1fr) 338px;
+      grid-template-columns: 340px minmax(0, 1fr) 340px;
       gap: 12px;
-      height: calc(100% - 52px);
-      margin-top: 10px;
+      height: calc(100% - 49px);
+      margin-top: 11px;
     }
 
     .panel {
       min-height: 0;
       border: 1px solid #dfe5ed;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.96);
-      box-shadow: var(--card-shadow);
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
     }
 
     .sidebar {
@@ -346,14 +415,14 @@
     }
 
     .tools {
-      padding: 20px 16px;
+      padding: 18px 16px;
     }
 
     .tools-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 30px;
+      margin-bottom: 26px;
       font-size: 16px;
       font-weight: 750;
     }
@@ -384,27 +453,28 @@
 
     .tool-card {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       min-height: 85px;
       padding: 15px 43px 12px 13px;
       border: 1px solid #eef1f5;
       border-radius: 12px;
-      color: #a6adb7;
-      background: #fbfbfc;
-      filter: grayscale(1);
-      opacity: 0.52;
+      color: #374151;
+      background: #f9fafb;
+      filter: none;
+      opacity: 1;
       transition:
-        color 280ms ease,
-        background-color 280ms ease,
-        border-color 280ms ease,
-        filter 280ms ease,
-        opacity 280ms ease;
+        box-shadow 180ms ease,
+        filter 180ms ease,
+        opacity 180ms ease,
+        transform 180ms ease;
     }
 
     .tool-card svg {
       display: block;
       width: 18px;
       height: 18px;
-      margin-bottom: 10px;
       fill: none;
       stroke: currentColor;
       stroke-linecap: round;
@@ -438,54 +508,49 @@
       transform: translateX(1px);
     }
 
-    .tools.is-active .tool-card {
-      filter: none;
-      opacity: 1;
-    }
-
-    .tools.is-active .study-tool {
+    .study-tool {
       color: #9a4b12;
       border-color: #f4dfa4;
       background: #fff8da;
     }
 
-    .tools.is-active .flash-tool {
+    .flash-tool {
       color: #991b1b;
       border-color: #fee2e2;
       background: #fef2f2;
     }
 
-    .tools.is-active .quiz-tool {
+    .quiz-tool {
       color: #1e3a8a;
       border-color: #dbeafe;
       background: #eff6ff;
     }
 
-    .tools.is-active .mind-tool {
+    .mind-tool {
       color: #164e63;
       border-color: #cffafe;
       background: #ecfeff;
     }
 
-    .tools.is-active .short-tool {
+    .short-tool {
       color: #064e3b;
       border-color: #d1fae5;
       background: #ecfdf5;
     }
 
-    .tools.is-active .anatomy-tool {
+    .anatomy-tool {
       color: #4c1d95;
       border-color: #ede9fe;
       background: #f5f3ff;
     }
 
-    .tools.is-active .notes-tool {
+    .notes-tool {
       color: #0c4a6e;
       border-color: #e0f2fe;
       background: #f0f9ff;
     }
 
-    .tools.is-active .white-tool {
+    .white-tool {
       color: #881337;
       border-color: #ffe4e6;
       background: #fff1f2;
@@ -850,6 +915,17 @@
 <body>
   <main class="frame" id="frame" aria-label="Step 2 add sources demo">
     <section class="workspace is-blurred" id="workspace">
+      <img class="workspace-image" src="/images/workspace-how-to-start.png" alt="" draggable="false" />
+      <div class="tool-highlight-layer" aria-hidden="true">
+        <span class="tool-hotspot flash-hotspot"></span>
+        <span class="tool-hotspot quiz-hotspot"></span>
+        <span class="tool-hotspot mind-hotspot"></span>
+        <span class="tool-hotspot short-hotspot"></span>
+        <span class="tool-hotspot anatomy-hotspot"></span>
+        <span class="tool-hotspot notes-hotspot"></span>
+        <span class="tool-hotspot white-hotspot"></span>
+      </div>
+
       <header class="topbar">
         <div class="workspace-name">⌂ <span id="workspaceTitle">Workspace</span></div>
         <div class="top-actions">ⓘ ◔</div>
@@ -1034,7 +1110,7 @@
     }
 
     function resizeDemo() {
-      demoScale = Math.min(window.innerWidth / 1280, window.innerHeight / 800);
+      demoScale = Math.min(window.innerWidth / 1366, window.innerHeight / 768);
       document.documentElement.style.setProperty("--demo-scale", demoScale);
     }
 
@@ -1067,52 +1143,45 @@
     async function play() {
       const startedAt = performance.now();
 
-      await waitUntil(startedAt, 900);
+      await waitUntil(startedAt, 650);
       modalScroll.classList.add("is-scrolled");
-      await waitUntil(startedAt, 4100);
+      await waitUntil(startedAt, 2800);
 
-      await moveCursor(pointFor(uploadButton, 0.52, 0.5), 420);
+      await moveCursor(pointFor(uploadButton, 0.52, 0.5), 320);
       await clickCursor();
       uploadButton.classList.add("is-pressed");
-      await wait(160);
+      await wait(110);
       uploadButton.classList.remove("is-pressed");
 
       dropZone.classList.add("is-uploading");
       progressFill.style.setProperty("--progress", "26%");
-      await waitUntil(startedAt, 5900);
+      await waitUntil(startedAt, 4100);
 
       progressFill.style.setProperty("--progress", "100%");
       uploadLabel.textContent = "Uploading 100%";
-      await waitUntil(startedAt, 6426);
+      await waitUntil(startedAt, 4800);
 
       modalLayer.classList.add("is-hidden");
       workspace.classList.remove("is-blurred");
-      await wait(260);
+      await wait(180);
       workspace.classList.add("is-final");
       workspaceTitle.textContent = "Workspace";
       sourceCount.textContent = "2 SOURCES";
       statsPill.classList.add("is-visible");
-      await wait(180);
+      await wait(120);
       sourceOne.classList.add("is-visible");
-      await wait(260);
+      await wait(160);
       sourceTwo.classList.add("is-visible");
-      await waitUntil(startedAt, 8620);
+      await waitUntil(startedAt, 6300);
       toolsPanel.classList.add("is-active");
 
-      const highlightedTools = Array.from(document.querySelectorAll(".tools .tool-card")).filter((tool) => (
-        tool.classList.contains("flash-tool")
-        || tool.classList.contains("quiz-tool")
-        || tool.classList.contains("mind-tool")
-        || tool.classList.contains("anatomy-tool")
-        || tool.classList.contains("notes-tool")
-        || tool.classList.contains("white-tool")
-      ));
+      const highlightedTools = Array.from(document.querySelectorAll(".tool-highlight-layer .tool-hotspot"));
 
       for (const tool of highlightedTools) {
         tool.classList.add("is-highlighted");
-        await wait(720);
+        await wait(320);
         tool.classList.remove("is-highlighted");
-        await wait(160);
+        await wait(70);
       }
 
       await waitUntil(startedAt, 16901);
