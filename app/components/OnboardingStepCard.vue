@@ -686,7 +686,8 @@ const generalPreviewFrameTitle = computed(() => activeCopy.value.generalPreview.
 const generalPreviewExpandLabel = "Expand general questions preview";
 const generalPreviewModalLabel = "Expanded general questions preview";
 const generalPreviewCloseLabel = "Close general questions preview";
-const generalPreviewSrc = "/videos/general-mode.mp4";
+const generalPreviewVersion = "2026-09-12-final";
+const generalPreviewSrc = computed(() => `/videos/general-mode.mp4?v=${generalPreviewVersion}&play=${generalPreviewReplayKey.value}`);
 const hasUsageModePreview = (mode: UsageModeId) =>
   mode === "study" || mode === "clinic" || mode === "general-questions";
 
